@@ -1,0 +1,87 @@
+agrofarm-frontend/
+├── public/
+│   └── index.html
+├── src/
+│
+├── assets/
+│   └── images/
+│   └── icons/
+│   └── illustrations/
+│
+├── components/
+│   └── common/
+│       ├── Navbar.jsx
+│       ├── Sidebar.jsx
+│       ├── Footer.jsx
+│       └── Loader.jsx
+│   └── messaging/
+│       ├── ChatBox.jsx
+│       ├── MessageList.jsx
+│       ├── UserList.jsx
+│       └── NotificationBadge.jsx
+│
+├── contexts/
+│   └── AuthContext.jsx
+│   └── SocketContext.jsx
+│
+├── hooks/
+│   └── useAuth.js
+│   └── useSocket.js
+│   └── useUnreadMessages.js
+│
+├── layouts/
+│   └── MainLayout.jsx
+│   └── DashboardLayout.jsx
+│
+├── pages/
+│   └── Login.jsx
+│   └── Register.jsx
+│   └── NotFound.jsx
+│
+├── roles/
+│   ├── farmer/
+│   │   ├── components/
+│   │   │   └── TaskList.jsx
+│   │   ├── pages/
+│   │   │   └── Dashboard.jsx
+│   │   └── FarmerRoutes.jsx
+│   │
+│   ├── manager/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   └── ManagerRoutes.jsx
+│   │
+│   ├── expert/
+│   │   ├── components/
+│   │   │   └── RecommendationPanel.jsx
+│   │   ├── pages/
+│   │   │   └── Dashboard.jsx
+│   │   └── ExpertRoutes.jsx
+│   │
+│   └── owner/
+│       ├── components/
+│       ├── pages/
+│       └── OwnerRoutes.jsx
+│
+├── routes/
+│   └── ProtectedRoute.jsx
+│   └── AppRoutes.jsx
+│
+├── services/
+│   ├── api.js
+│   ├── authService.js
+│   ├── userService.js
+│   ├── messageService.js
+│   └── expertService.js
+│
+├── styles/
+│   ├── tailwind.css
+│   └── globals.module.css
+│
+├── utils/
+│   └── validators.js
+│   └── formatDate.js
+│
+├── App.jsx
+├── main.jsx
+└── index.css

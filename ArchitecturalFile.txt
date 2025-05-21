@@ -1,0 +1,161 @@
+classDiagram
+    class User {
+        +String id
+        +String username
+        +String email
+        +String password
+        +authenticate()
+    }
+
+    class FarmerProfile {
+        +String userId
+        +String farmId
+        +updateProfile()
+    }
+
+    class ManagerProfile {
+        +String userId
+        +List~FarmerProfile~ farmers
+        +assignTask()
+        +updateProfile()
+    }
+
+    class ExpertProfile {
+        +String userId
+        +List~Visit~ visits
+        +analyzeData()
+        +giveRecommendations()
+    }
+
+    class FarmOwner {
+        +String userId
+        +List~Farm~ farms
+    }
+
+    class Farm {
+        +String id
+        +String name
+        +List~Crop~ crops
+        +List~Task~ tasks
+    }
+
+    class Crop {
+        +String id
+        +String name
+        +String status
+        +Date plantingDate
+        +Date expectedHarvest
+    }
+
+    class Task {
+        +String id
+        +String description
+        +Date dueDate
+        +String assignedTo
+        +String status
+    }
+
+    class Equipment {
+        +String id
+        +String type
+        +String status
+        +String location
+    }
+
+    class Inventory {
+        +String id
+        +String type
+        +String quantity
+        +String unit
+    }
+
+    class Weather {
+        +String id
+        +String location
+        +String forecast
+    }
+
+    class Visit {
+        +String id
+        +Date date
+        +String notes
+        +String farmId
+    }
+
+    User <|-- FarmerProfile
+    User <|-- ManagerProfile
+    User <|-- ExpertProfile
+    User <|-- FarmOwner
+    FarmOwner --> Farm
+    Farm --> Crop
+    Farm --> Task
+    ManagerProfile --> FarmerProfile
+    ExpertProfile --> Visit
+///////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+SEQUENCE 
+sequenceDiagram
+    participant User
+    participant AuthController
+    participant Dashboard
+
+    User->>AuthController: Enter username/password
+    AuthController->>AuthController: Validate credentials
+    AuthController-->>User: Return token/session
+    User->>Dashboard: Access dashboard with token
+    Dashboard-->>User: Show user-specific UI
+
+    alt Task Assignment (Manager)
+        participant Manager
+        participant TaskController
+        participant Farmer
+
+        Manager->>TaskController: Assign task to Farmer
+        TaskController->>Farmer: Notify assigned task
+        Farmer-->>TaskController: Update task status
+    end
+
+    alt Crop Monitoring (Farmer)
+        participant CropController
+        Farmer->>CropController: Update crop status
+        CropController-->>Manager: Reflect updated crop data
+        CropController-->>Expert: Share for analysis
+    end
+
+
+//////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
+UML DIAGRAMS
+%%{ init : { "theme": "default" } }%%
+usecaseDiagram
+    actor Farmer
+    actor Manager
+    actor Expert
+    actor FarmOwner
+
+    Farmer --> (Track Crop Status)
+    Farmer --> (Control Irrigation)
+    Farmer --> (View Tasks)
+    Farmer --> (Check Equipment)
+    Farmer --> (View Weather)
+    Farmer --> (Receive Pest Alerts)
+
+    Manager --> (View Dashboard)
+    Manager --> (Assign Tasks)
+    Manager --> (View Field Map)
+    Manager --> (Manage Inventory)
+    Manager --> (Manage Labor)
+    Manager --> (Financial Monitoring)
+    Manager --> (Generate Reports)
+
+    Expert --> (Provide Recommendations)
+    Expert --> (Schedule Field Visits)
+    Expert --> (Analyze Data)
+    Expert --> (Access Knowledge Base)
+    Expert --> (Communicate with Users)
+
+    FarmOwner --> (View Farm Summary)
+    FarmOwner --> (Manage Farms)
+    FarmOwner --> (Monitor Performance)
+

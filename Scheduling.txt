@@ -1,0 +1,478 @@
+Time Frame for this Application.
+Task1.
+Get The means of Communications in this system; How is Communication done in this system.
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////
+agro-farm-frontend/
+├── public/
+│   └── index.html
+│
+├── src/
+│   ├── assets/                  # Static assets (images, icons, etc.)
+│
+│   ├── components/              # Shared UI components
+│   │   ├── Header.jsx
+│   │   ├── Sidebar.jsx
+│   │   ├── Footer.jsx
+│   │   ├── PrivateRoute.jsx
+│   │   └── Loader.jsx
+│
+│   ├── pages/                   # All route-based pages
+│   │   ├── Login.jsx
+│   │   ├── Register.jsx
+│   │   ├── NotFound.jsx
+│   │   └── Dashboard.jsx
+│
+│   ├── features/                # Role-specific directories
+│   │   ├── farmer/
+│   │   │   ├── CropStatus.jsx
+│   │   │   ├── IrrigationControl.jsx
+│   │   │   ├── TaskList.jsx
+│   │   │   └── EquipmentStatus.jsx
+│   │   │
+│   │   ├── manager/
+│   │   │   ├── ManagerDashboard.jsx
+│   │   │   ├── AssignTasks.jsx
+│   │   │   ├── InventoryManagement.jsx
+│   │   │   └── FinancialOverview.jsx
+│   │   │
+│   │   ├── expert/
+│   │   │   ├── Recommendations.jsx
+│   │   │   ├── FieldVisits.jsx
+│   │   │   ├── DataAnalysis.jsx
+│   │   │   └── KnowledgeBase.jsx
+│   │   │
+│   │   └── owner/
+│   │       ├── OwnerDashboard.jsx
+│   │       ├── ManageFarms.jsx
+│   │       └── ProfitabilityReports.jsx
+│
+│   ├── contexts/                # Global state (Auth/User context)
+│   │   └── AuthContext.js
+│
+│   ├── hooks/                   # Reusable custom hooks
+│   │   └── useAuth.js
+│
+│   ├── services/                # API calls (Axios or fetch)
+│   │   ├── authService.js
+│   │   ├── cropService.js
+│   │   ├── taskService.js
+│   │   └── userService.js
+│
+│   ├── styles/                  # Global styles
+│   │   └── index.css
+│
+│   ├── App.jsx                  # App wrapper + routing
+│   ├── main.jsx                 # ReactDOM render entry
+│   └── config.js                # API endpoints, constants
+│
+├── .env
+├── .gitignore
+├── package.json
+└── README.md
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+agro-farm-backend/
+├── config/                # Configuration files (e.g., DB, app-level)
+│   ├── dbConfig.js
+│   └── appConfig.js
+│
+├── controllers/          # Route handlers (business logic)
+│   ├── authController.js
+│   ├── cropController.js
+│   ├── equipmentController.js
+│   ├── expertController.js
+│   ├── farmerController.js
+│   ├── farmOwnerController.js
+│   ├── inventoryController.js
+│   ├── irrigationController.js
+│   ├── managerController.js
+│   ├── taskController.js
+│   └── weatherController.js
+│
+├── data/                 # Seed scripts, sample data for testing
+│   ├── sampleUsers.js
+│   ├── sampleFarms.js
+│   └── sampleCrops.js
+│
+├── emails/               # Email templates and logic
+│   ├── templates/
+│   │   └── welcomeEmail.html
+│   └── emailService.js
+│
+├── middleware/           # Auth, error, validation middlewares
+│   ├── authMiddleware.js
+│   ├── errorHandler.js
+│   └── validateRequest.js
+│
+├── models/               # Mongoose schemas
+│   ├── userModel.js
+│   ├── farmerProfileModel.js
+│   ├── managerProfileModel.js
+│   ├── expertProfileModel.js
+│   ├── farmOwnerModel.js
+│   ├── farmModel.js
+│   ├── cropModel.js
+│   ├── taskModel.js
+│   ├── equipmentModel.js
+│   ├── inventoryModel.js
+│   └── weatherModel.js
+│
+├── routes/               # Express routes for each domain
+│   ├── authRoutes.js
+│   ├── cropRoutes.js
+│   ├── equipmentRoutes.js
+│   ├── expertRoutes.js
+│   ├── farmerRoutes.js
+│   ├── farmOwnerRoutes.js
+│   ├── inventoryRoutes.js
+│   ├── irrigationRoutes.js
+│   ├── managerRoutes.js
+│   ├── taskRoutes.js
+│   └── weatherRoutes.js
+│
+├── utils/                # Helper utilities
+│   ├── jwtUtils.js
+│   ├── fileUploadUtils.js
+│   ├── weatherUtils.js
+│   └── pestAlertUtils.js
+│
+├── extra/                # (Optional) For AI, ML models, integrations, custom scripts
+│   ├── ai/
+│   │   └── cropPrediction.js
+│   └── analytics/
+│       └── reportGenerator.js
+│
+├── .env                  # Environment variables (PORT, DB_URI, etc.)
+├── .gitignore
+├── package.json
+├── README.md
+└── server.js             # Entry point
+
+
+
+const Task = require('../models/taskModel');
+
+exports.createTask = async (req, res) => {
+  try {
+    const task = await Task.create(req.body);
+    res.status(201).json(task);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+exports.getAllTasks = async (req, res) => {
+  try {
+    const tasks = await Task.find().populate('assignedTo farm crop');
+    res.status(200).json(tasks);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.getTaskById = async (req, res) => {
+  try {
+    const task = await Task.findById(req.params.id).populate('assignedTo farm crop');
+    if (!task) return res.status(404).json({ error: 'Task not found' });
+    res.status(200).json(task);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.updateTask = async (req, res) => {
+  try {
+    const task = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!task) return res.status(404).json({ error: 'Task not found' });
+    res.status(200).json(task);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+exports.deleteTask = async (req, res) => {
+  try {
+    const task = await Task.findByIdAndDelete(req.params.id);
+    if (!task) return res.status(404).json({ error: 'Task not found' });
+    res.status(200).json({ message: 'Task deleted' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+
+///// Farm Controller.js file 
+const FarmProfile = require('../models/farmProfileModel');
+
+exports.createFarmProfile = async (req, res) => {
+  try {
+    const profile = await FarmProfile.create(req.body);
+    res.status(201).json(profile);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+exports.getAllFarmProfiles = async (req, res) => {
+  try {
+    const profiles = await FarmProfile.find().populate('farm');
+    res.status(200).json(profiles);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.getFarmProfileById = async (req, res) => {
+  try {
+    const profile = await FarmProfile.findById(req.params.id).populate('farm');
+    if (!profile) return res.status(404).json({ error: 'Profile not found' });
+    res.status(200).json(profile);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.updateFarmProfile = async (req, res) => {
+  try {
+    const profile = await FarmProfile.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!profile) return res.status(404).json({ error: 'Profile not found' });
+    res.status(200).json(profile);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+exports.deleteFarmProfile = async (req, res) => {
+  try {
+    const profile = await FarmProfile.findByIdAndDelete(req.params.id);
+    if (!profile) return res.status(404).json({ error: 'Profile not found' });
+    res.status(200).json({ message: 'Profile deleted' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+    ////// AuthContoller.js
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    const User = require('../models/userModel');
+
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find().select('-password');
+    res.status(200).json(users);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.getUserById = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).select('-password');
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.updateUser = async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true }).select('-password');
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+exports.deleteUser = async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    res.status(200).json({ message: 'User deleted' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+const Farm = require('../models/farmModel');
+
+exports.createFarm = async (req, res) => {
+  try {
+    const farm = await Farm.create(req.body);
+    res.status(201).json(farm);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+exports.getAllFarms = async (req, res) => {
+  try {
+    const farms = await Farm.find();
+    res.status(200).json(farms);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.getFarmById = async (req, res) => {
+  try {
+    const farm = await Farm.findById(req.params.id);
+    if (!farm) return res.status(404).json({ error: 'Farm not found' });
+    res.status(200).json(farm);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.updateFarm = async (req, res) => {
+  try {
+    const farm = await Farm.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!farm) return res.status(404).json({ error: 'Farm not found' });
+    res.status(200).json(farm);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+exports.deleteFarm = async (req, res) => {
+  try {
+    const farm = await Farm.findByIdAndDelete(req.params.id);
+    if (!farm) return res.status(404).json({ error: 'Farm not found' });
+    res.status(200).json({ message: 'Farm deleted' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+const Crop = require('../models/cropModel');
+
+// Create crop
+exports.createCrop = async (req, res) => {
+  try {
+    const crop = await Crop.create(req.body);
+    res.status(201).json(crop);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+// Get all crops
+exports.getAllCrops = async (req, res) => {
+  try {
+    const crops = await Crop.find();
+    res.status(200).json(crops);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Get crop by ID
+exports.getCropById = async (req, res) => {
+  try {
+    const crop = await Crop.findById(req.params.id);
+    if (!crop) return res.status(404).json({ error: 'Crop not found' });
+    res.status(200).json(crop);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Update crop
+exports.updateCrop = async (req, res) => {
+  try {
+    const crop = await Crop.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!crop) return res.status(404).json({ error: 'Crop not found' });
+    res.status(200).json(crop);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+// Delete crop
+exports.deleteCrop = async (req, res) => {
+  try {
+    const crop = await Crop.findByIdAndDelete(req.params.id);
+    if (!crop) return res.status(404).json({ error: 'Crop not found' });
+    res.status(200).json({ message: 'Crop deleted' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};

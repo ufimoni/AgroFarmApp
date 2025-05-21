@@ -1,0 +1,22 @@
+3.5.1 Functional Requirements
+The AgroFarm system must support the following functional requirements:
+
+ID	Requirement
+FR1	Users can register and log in with appropriate roles (Farmer, Manager, Expert, Owner).
+FR2	Farm Owners can create and manage farm profiles.
+FR3	Managers can assign tasks to farmers and monitor their completion.
+FR4	Farmers can view, update, and complete their assigned tasks.
+FR5	Experts can provide crop, pest, and soil recommendations based on submitted farm data.
+FR6	Real-time messaging is enabled between users (e.g., farmers <-> managers, owners <-> experts).
+FR7	Users can view and respond to notifications regarding new messages or tasks.
+FR8	System maintains logs of activities like task assignments, recommendations, and completions.
+
+3.5.2 Non-Functional Requirements
+ID	Requirement
+NFR1	The system must have a responsive design (mobile/tablet/desktop compatibility).
+NFR2	All user actions must be secured using JWT authentication and role-based authorization.
+NFR3	Real-time messaging must ensure low latency communication under 1 second delay.
+NFR4	The system must be available 99% of the time with minimal downtime.
+NFR5	Data should be stored in a NoSQL database (MongoDB) with efficient indexing for performance.
+NFR6	The frontend should load within 3 seconds on average network speed.
+NFR7	The application should scale to support at least 500 concurrent users.

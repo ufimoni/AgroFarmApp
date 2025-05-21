@@ -1,0 +1,2 @@
+setup a logo in canvas
+create the UML diagrams.

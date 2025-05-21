@@ -1,0 +1,238 @@
+seperate dashboards is checked and it should be more user freindly
+but we should have single login and signup pages let users select their roles. they should have role selecetion built within the UI
+ USERS
+ 1. farmers
+ 2. farm-managers
+ 3. Agricultural experts
+ 
+ 
+ ADMIN: the admin should have the following
+Manage Users: Create, update, or delete users (farmers, managers, experts).
+
+Manage Farms: Add, assign, or review farms and their status.
+
+Analytics: View system-level analytics (e.g., number of users, farm statistics).
+both the front-end and backend of this application.
+ManageUsers.jsx: User CRUD operations.
+
+ManageFarms.jsx: Farm-specific actions.
+1. in the front-End please note if creating a login and signup pages. navigate to each dashboard by roles specified.
+criteria login email and password. farmId not reccomended for now.
+
+Fuctionality of the system
+1.  What are the means of communications in this system
+2. Goal: to connect Farmers with Farm-managers and Agricultural experts together
+3. How do we get Connected.
+
+
+#####################################################################
+#####################################################################
+How Can they Have Conversations.
+1.Implememting Chatting here in this application.
+2. Ability to display user's profile: if a farmer updates his profile a farm-manager should be able to view the farmer's profile, and other logged-in users should be able to view the profiles.
+3. Admin should be able to view all profiles, logged-in-users and logged-out users.
+
+###########################################
+###########################################
+Now Stack-Flow of this Application
+1. When a Farmer clicks on the Farm-Manager profile while after seacrhing for Available Farm-Manager.
+he cannot have conversations on this application with the Farm-managers.
+
+agrofarm-frontend/
+├── public/
+│   └── index.html
+├── src/
+│
+├── assets/
+│   └── images/
+│   └── icons/
+│   └── illustrations/
+│
+├── components/
+│   └── common/
+│       ├── Navbar.jsx
+│       ├── Sidebar.jsx
+│       ├── Footer.jsx
+│       └── Loader.jsx
+│   └── messaging/
+│       ├── ChatBox.jsx
+│       ├── MessageList.jsx
+│       ├── UserList.jsx
+│       └── NotificationBadge.jsx
+│
+├── contexts/
+│   └── AuthContext.jsx
+│   └── SocketContext.jsx
+│
+├── hooks/
+│   └── useAuth.js
+│   └── useSocket.js
+│   └── useUnreadMessages.js
+│
+├── layouts/
+│   └── MainLayout.jsx
+│   └── DashboardLayout.jsx
+│
+├── pages/
+│   └── Login.jsx
+│   └── Register.jsx
+│   └── NotFound.jsx
+│
+├── roles/
+│   ├── farmer/
+│   │   ├── components/
+│   │   │   └── TaskList.jsx
+│   │   ├── pages/
+│   │   │   └── Dashboard.jsx
+│   │   └── FarmerRoutes.jsx
+│   │
+│   ├── manager/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   └── ManagerRoutes.jsx
+│   │
+│   ├── expert/
+│   │   ├── components/
+│   │   │   └── RecommendationPanel.jsx
+│   │   ├── pages/
+│   │   │   └── Dashboard.jsx
+│   │   └── ExpertRoutes.jsx
+│   │
+│   └── owner/
+│       ├── components/
+│       ├── pages/
+│       └── OwnerRoutes.jsx
+│
+├── routes/
+│   └── ProtectedRoute.jsx
+│   └── AppRoutes.jsx
+│
+├── services/
+│   ├── api.js
+│   ├── authService.js
+│   ├── userService.js
+│   ├── messageService.js
+│   └── expertService.js
+│
+├── styles/
+│   ├── tailwind.css
+│   └── globals.module.css
+│
+├── utils/
+│   └── validators.js
+│   └── formatDate.js
+│
+├── App.jsx
+├── main.jsx
+└── index.css
+
+
+Role	Description
+Farmer	Performs tasks on the farm: planting, watering, harvesting, etc.
+Manager	Oversees daily operations, assigns tasks, tracks performance
+Expert	Provides recommendations on crops, soil, pests, and other agricultural needs
+Owner	The person who owns the farm(s); can view reports, hire managers/farmers, and monitor operations.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import { useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom';
+import { getLoggedUser } from "../apiCalls/user";
+import { useDispatch, useSelector } from "react-redux";
+import { hideLoader, showLoader } from "../redux/loaderSlice";
+import { setUser } from "../redux/usersSlice";
+import toast from 'react-hot-toast';
+
+function ProtectedRoute({ children }) {
+  const dispatch = useDispatch();
+  const { user } = useSelector(state => state.userReducer);
+  const navigate = useNavigate();
+
+  const getLoggedInUser = async () => {
+    try {
+      dispatch(showLoader());
+      const response = await getLoggedUser();
+      dispatch(hideLoader());
+
+      if (response.success) {
+        dispatch(setUser(response.data));
+      } else {
+        toast.error(response.message);
+        navigate('/login');
+      }
+    } catch (error) {
+      dispatch(hideLoader());
+      toast.error(error.message);
+      navigate('/login');
+    }
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      getLoggedInUser();
+    } else {
+      navigate('/login');
+    }
+  }, [navigate]);
+
+  return <>{children}</>;
+}
+
+export default ProtectedRoute;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
