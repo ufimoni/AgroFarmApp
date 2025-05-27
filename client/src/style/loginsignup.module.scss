@@ -1,0 +1,40 @@
+// loginsignup.module.scss
+.bgOverlay {
+  background: url('/assets/farm-bg.jpg') no-repeat center center;
+  background-size: cover;
+  position: relative;
+  padding: 20px;
+}
+
+.bgOverlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: rgba(255, 255, 255, 0.85);
+  z-index: 0;
+}
+
+.card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+}
+.select-occupation{
+  cursor: pointer;
+}
+@media (max-width: 576px) {
+  .card {
+    padding: 1.5rem !important;
+  }
+
+  .form-control,
+  .form-select,
+  .btn {
+    font-size: 0.95rem;
+    padding: 0.5rem 0.75rem;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+}

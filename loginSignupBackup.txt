@@ -1,0 +1,223 @@
+// Login.jsx
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { LoginUser } from '../../api/auth';
+import { useDispatch } from 'react-redux';
+import { toast } from 'react-hot-toast';
+import { hideLoader, showLoader } from '../../redux/loaderSlice';
+import { setUser } from '../../redux/userSlice';
+import styles from './loginsignup.module.scss';
+
+function Login() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [user, setUserState] = useState({ email: '', password: '' });
+
+  const onFormSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      dispatch(showLoader());
+      const response = await LoginUser(user);
+      dispatch(hideLoader());
+
+      if (response.success) {
+        toast.success(response.message);
+        localStorage.setItem('token', response.token);
+        dispatch(setUser(response.user));
+
+        const role = response.user.role;
+        if (role === 'farmer') navigate('/farmer');
+        else if (role === 'manager') navigate('/manager');
+        else if (role === 'expert') navigate('/expert');
+        else navigate('/home');
+      } else {
+        toast.error(response.message);
+      }
+    } catch (error) {
+      dispatch(hideLoader());
+      toast.error('Login failed. Please check your credentials.');
+    }
+  };
+
+  return (
+    <div className={`container d-flex justify-content-center align-items-center min-vh-100 ${styles.bgOverlay}`}>
+      <div className="card p-4 shadow rounded w-100" style={{ maxWidth: '420px' }}>
+        <h1 className="text-center text-success mb-4">Login</h1>
+        <form onSubmit={onFormSubmit} className="d-flex flex-column gap-3">
+          <input type="email" className="form-control" placeholder="Email" value={user.email} onChange={(e) => setUserState({ ...user, email: e.target.value })} required />
+          <input type="password" className="form-control" placeholder="Password" value={user.password} onChange={(e) => setUserState({ ...user, password: e.target.value })} required />
+          <button type="submit" className="btn btn-success">Login</button>
+        </form>
+        <div className="text-center mt-3">
+          <span>Don't have an account? <Link to="/signup">Signup</Link></span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default Login;
+
+
+// Signup.jsx
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
+import { SignupUser } from '../../api/auth';
+import { useDispatch } from 'react-redux';
+import { hideLoader, showLoader } from '../../redux/loaderSlice';
+import styles from './loginsignup.module.scss';
+
+function Signup() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [user, setUser] = useState({
+    firstname: '', lastname: '', email: '', password: '', role: '', phone: '', image: '', roleProfileType: ''
+  });
+
+  const onFormSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      dispatch(showLoader());
+      const response = await SignupUser(user);
+      dispatch(hideLoader());
+      if (response.success) {
+        toast.success(response.message);
+        navigate('/login');
+      } else {
+        toast.error(response.message);
+      }
+    } catch (error) {
+      dispatch(hideLoader());
+      toast.error('Signup failed. Please check your input.');
+    }
+  };
+
+  return (
+    <div className={`container d-flex justify-content-center align-items-center min-vh-100 ${styles.bgOverlay}`}>
+      <div className="card p-4 shadow rounded" style={{ maxWidth: '420px', width: '100%' }}>
+        <h1 className="text-center text-success mb-4">Signup</h1>
+        <form onSubmit={onFormSubmit} className="d-flex flex-column gap-3">
+          <input type="text" className="form-control" placeholder="First Name" required onChange={(e) => setUser({ ...user, firstname: e.target.value })} />
+          <input type="text" className="form-control" placeholder="Last Name" required onChange={(e) => setUser({ ...user, lastname: e.target.value })} />
+          <input type="email" className="form-control" placeholder="Email" required onChange={(e) => setUser({ ...user, email: e.target.value })} />
+          <input type="password" className="form-control" placeholder="Password" required onChange={(e) => setUser({ ...user, password: e.target.value })} />
+          <input type="text" className="form-control" placeholder="Phone" required onChange={(e) => setUser({ ...user, phone: e.target.value })} />
+          <input type="text" className="form-control" placeholder="Role" required onChange={(e) => setUser({ ...user, role: e.target.value })} />
+          <button type="submit" className="btn btn-success">Signup</button>
+        </form>
+        <div className="text-center mt-3">
+          <span>Already have an account? <Link to="/login">Login</Link></span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default Signup;
+
+
+// loginsignup.module.scss
+@import 'bootstrap/scss/bootstrap';
+
+$primary-color: #2e7d32;
+$secondary-color: #ffffff;
+$bg-color: #f9f9f9;
+$card-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+
+.container {
+  @extend .container-fluid;
+  min-height: 100vh;
+  background: $bg-color;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+
+  .backgroundImg {
+    background: url('/assets/farm-bg.jpg') no-repeat center center;
+    background-size: cover;
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    opacity: 0.1;
+  }
+
+  .card {
+    @extend .card;
+    max-width: 420px;
+    background-color: $secondary-color;
+    padding: 2rem;
+    z-index: 1;
+    box-shadow: $card-shadow;
+    border-radius: 0.75rem;
+
+    .card_title {
+      @extend .text-center;
+      h1 {
+        color: $primary-color;
+        font-size: 2rem;
+        font-weight: 600;
+      }
+    }
+
+    .form {
+      @extend .mt-4;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+
+      input {
+        @extend .form-control;
+        padding: 0.75rem;
+        border-radius: 0.5rem;
+        border: 1px solid #ced4da;
+      }
+
+      button {
+        @extend .btn;
+        @extend .btn-success;
+        background-color: $primary-color;
+        border: none;
+        padding: 0.75rem;
+        font-weight: 500;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+          background-color: darken($primary-color, 10%);
+        }
+      }
+    }
+
+    .card_terms {
+      @extend .text-center;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+
+      span {
+        color: #555;
+
+        a {
+          color: $primary-color;
+          text-decoration: none;
+          font-weight: 500;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+  }
+}
+
+
+
+
+const newFarmerProfile = await FarmerProfile.create({
+  user: user._id,
+  farmName: req.body.farmName,
+  location: req.body.location,
+});
+user.roleProfileType = newFarmerProfile._id;
+await user.save();

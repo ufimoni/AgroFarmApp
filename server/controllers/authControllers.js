@@ -79,58 +79,58 @@ exports.signup = asyncErrorHandler( async (req, res) => {
 }
 
 ) 
- exports.login = asyncErrorHandler(async (req, res) => {
-  try {
-    const { email, password } = req.body;
+exports.login = asyncErrorHandler(async (req, res) => {
+  const { email, password } = req.body;
 
-    //  Check if user already exists
-    const user = await Users.findOne({ email });
-    if (!user) {
-      return res.status(400).json({
-        success: false,
-        message: 'User does not exists',
-      });
-    }
-      
-   // 2. Compare password
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid email or password',
-      });
-    }
-
-
-    //  Generate JWT token
-    const token = jwt.sign({ userId: user._id }, process.env.Secret_Key, {
-      expiresIn: '1d',
-    });
-
-
-    // Set cookie and send response
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 24 * 60 * 60 * 1000,
-    });
-
-    return res.status(201).json({
-      success: true,
-      message: 'Login successful',
-      user,
-      token,
-    });
-
-  } catch (error) {
-    console.error('Signup Error:', error);
-    res.status(500).json({
+  // Check if email and password are provided
+  if (!email || !password) {
+    return res.status(400).json({
       success: false,
-      message: error.message,
+      message: 'Email and password are required',
     });
   }
-}) 
+
+  // Find user by email
+  const user = await Users.findOne({ email });
+  if (!user) {
+    return res.status(401).json({
+      success: false,
+      message: 'Invalid email or password',
+    });
+  }
+
+  // Check password
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) {
+    return res.status(401).json({
+      success: false,
+      message: 'Invalid email or password',
+    });
+  }
+
+  // Create token safely
+  const token = jwt.sign({ userId: user._id }, JWT_Secrete, {
+    expiresIn: '1d',
+  });
+
+  // Remove password before sending user object
+  const { password: _, ...userWithoutPassword } = user._doc;
+
+  // Send token in cookie
+  res.cookie('token', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    maxAge: 24 * 60 * 60 * 1000,
+  });
+
+  res.status(200).json({
+    success: true,
+    message: 'Login successful',
+    token,
+    user: userWithoutPassword,
+  });
+});
 
 exports.logout = asyncErrorHandler( async( req, res ) =>{
    res.clearCookie('token')

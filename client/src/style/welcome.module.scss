@@ -1,0 +1,26 @@
+.welcomeSection {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  text-align: center;
+  background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+              url('./../assets/happy-woman.jpg') no-repeat center center/cover;          
+  padding: 2rem;
+}
+
+.welcomeCard {
+  background-color: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(13px);
+  -webkit-backdrop-filter: blur(13px);
+  padding: 2rem 3rem;
+  border-radius: 12px;
+  max-width: 600px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  color: #fff
+}
+ /* Keep the text clear and clean*/
+ #welcome, p{
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+ }

@@ -1,0 +1,8 @@
+✅ Recommended Color Palette:
+Purpose	Color	Example HEX	Notes
+Primary	Green	#2ecc71	Clean, fresh, associated with agriculture.
+Background	White	#ffffff	Clean, simple, and spacious.
+Accent	Dark Green	#27ae60	For buttons, headers, or hover states.
+Neutral	Light Gray	#f0f0f0	For backgrounds, cards, or subtle borders.
+Warning/Error	Soft Red or Orange	#e74c3c / #f39c12	To indicate errors or alerts.
+Text	Dark Gray / Near Black	#2c3e50	For strong contrast on white backgrounds.

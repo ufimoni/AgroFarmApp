@@ -1,0 +1,300 @@
+import React, { useState } from 'react';
+
+const Signup = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+
+  const handleSignup = (e) => {
+    e.preventDefault();
+    console.log('Signing up with:', name, email, password);
+    // Call signup API here
+  };
+
+  return (
+    <div className="p-4 border rounded">
+      <h2>Signup</h2>
+      <form onSubmit={handleSignup}>
+        <input
+          type="text"
+          placeholder="Full Name"
+          className="form-control my-2"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
+        <input
+          type="email"
+          placeholder="Email"
+          className="form-control my-2"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          className="form-control my-2"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <button className="btn btn-success w-100">Signup</button>
+      </form>
+    </div>
+  );
+};
+
+export default Signup;
+
+
+import React from 'react';
+import { useSelector } from 'react-redux';
+import { BarLoader } from 'react-spinners';
+import styles from './Loader.module.css';
+
+const Loader = ({ color = '#2ecc71', size = 150 }) => {
+  const loading = useSelector((state) => state.loader.loader);
+
+  if (!loading) return null;
+
+  return (
+    <div className={styles.loaderContainer}>
+      <BarLoader color={color} loading={loading} width={size} />
+    </div>
+  );
+};
+
+export default Loader;
+
+
+
+
+// In login or signup page
+import { useDispatch } from 'react-redux';
+import { setUser } from '../redux/userSlice';
+import { setToken } from '../redux/authSlice';
+
+dispatch(setToken(token)); // from res.data.token
+dispatch(setUser({ profile: userData, role: userData.role }));
+ ///// Accessing any component 
+ import { useSelector } from 'react-redux';
+
+const user = useSelector((state) => state.user.profile);
+const role = useSelector((state) => state.user.role);
+const token = useSelector((state) => state.auth.token);
+const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+///Updated login
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { LoginUser } from '../../api/auth';
+import { toast } from 'react-hot-toast';
+import { useDispatch } from 'react-redux';
+import { showLoader, hideLoader } from '../../redux/loaderSlice';
+import { setUser } from '../../redux/userSlice';
+import { setToken } from '../../redux/authSlice';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import '../../styles/auth.scss';
+
+function Login() {
+  const [user, setUserState] = useState({ email: '', password: '' });
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setUserState({ ...user, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    dispatch(showLoader());
+
+    try {
+      const response = await LoginUser(user);
+      dispatch(hideLoader());
+
+      if (response.success) {
+        toast.success(response.message);
+        localStorage.setItem('token', response.token);
+        dispatch(setToken(response.token));
+        dispatch(setUser(response.user));
+
+        // Route based on user role
+        switch (response.user.role) {
+          case 'farmer':
+            navigate('/farmer');
+            break;
+          case 'manager':
+            navigate('/manager');
+            break;
+          case 'expert':
+            navigate('/expert');
+            break;
+          case 'owner':
+            navigate('/owner');
+            break;
+          default:
+            navigate('/');
+        }
+      } else {
+        toast.error(response.message);
+      }
+    } catch (error) {
+      dispatch(hideLoader());
+      toast.error('Login failed. Please try again.');
+    }
+  };
+
+  return (
+    <div className="auth-container">
+      <div className="auth-card">
+        <div className="auth-header">
+          <h2>Login</h2>
+        </div>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-3">
+            <input
+              type="email"
+              name="email"
+              className="form-control"
+              placeholder="Enter email"
+              value={user.email}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="mb-3">
+            <input
+              type="password"
+              name="password"
+              className="form-control"
+              placeholder="Enter password"
+              value={user.password}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <button className="btn btn-primary w-100" type="submit">Login</button>
+        </form>
+        <div className="auth-footer">
+          <p>Don't have an account? <Link to="/signup">Sign up here</Link></p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default Login;
+
+
+
+
+
+/////// Updated signup
+
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { SignupUser } from '../../api/auth';
+import { toast } from 'react-hot-toast';
+import { useDispatch } from 'react-redux';
+import { showLoader, hideLoader } from '../../redux/loaderSlice';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import '../../styles/auth.scss';
+
+function Signup() {
+  const [user, setUser] = useState({
+    firstname: '', lastname: '', email: '', password: '',
+    phone: '', role: '', roleProfileType: ''
+  });
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setUser({ ...user, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    dispatch(showLoader());
+
+    try {
+      const response = await SignupUser(user);
+      dispatch(hideLoader());
+
+      if (response.success) {
+        toast.success(response.message);
+        navigate('/login');
+      } else {
+        toast.error(response.message);
+      }
+    } catch (error) {
+      dispatch(hideLoader());
+      toast.error('Signup failed. Please try again.');
+    }
+  };
+
+  return (
+    <div className="auth-container">
+      <div className="auth-card">
+        <div className="auth-header">
+          <h2>Signup</h2>
+        </div>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-2"><input type="text" name="firstname" className="form-control" placeholder="First Name" onChange={handleChange} required /></div>
+          <div className="mb-2"><input type="text" name="lastname" className="form-control" placeholder="Last Name" onChange={handleChange} required /></div>
+          <div className="mb-2"><input type="email" name="email" className="form-control" placeholder="Email" onChange={handleChange} required /></div>
+          <div className="mb-2"><input type="password" name="password" className="form-control" placeholder="Password" onChange={handleChange} required /></div>
+          <div className="mb-2"><input type="text" name="phone" className="form-control" placeholder="Phone Number" onChange={handleChange} /></div>
+          <div className="mb-2">
+            <select className="form-select" name="role" onChange={handleChange} required>
+              <option value="">Select Role</option>
+              <option value="farmer">Farmer</option>
+              <option value="manager">Manager</option>
+              <option value="expert">Expert</option>
+              <option value="owner">Owner</option>
+            </select>
+          </div>
+          <div className="mb-3">
+            <input type="text" name="roleProfileType" className="form-control" placeholder="Role Profile Type" onChange={handleChange} />
+          </div>
+          <button className="btn btn-primary w-100" type="submit">Signup</button>
+        </form>
+        <div className="auth-footer">
+          <p>Already have an account? <Link to="/login">Login here</Link></p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default Signup;
+
+
+
+ <select className="form-select" required onChange={(e) => setUser({ ...user, role: e.target.value })}>
+            <option value="">Select Occupation</option>
+            <option value="farmer">Farmer</option>
+            <option value="farm-manager">Farm Manager</option>
+            <option value="agro-expert">Agro Expert</option>
+            <option value="owner">Farm Owner</option>
+          </select>
+
+          <button type="submit" className="btn btn-success">Signup</button>

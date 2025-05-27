@@ -140,6 +140,17 @@ Owner	The person who owns the farm(s); can view reports, hire managers/farmers, 
 
 
 
+farmer/
+├── Dashboard.jsx          ← Shared layout with sidebar/header
+├── index.jsx              ← Routes for all subpages
+├── components/
+│   ├── Sidebar.jsx
+│   ├── Header.jsx
+├── sections/
+│   ├── FarmOverview.jsx
+│   ├── Tasks.jsx
+│   └── ChatArea.jsx
+
 
 
 
