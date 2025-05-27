@@ -297,4 +297,106 @@ export default Signup;
             <option value="owner">Farm Owner</option>
           </select>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
           <button type="submit" className="btn btn-success">Signup</button>
+
+
+
+export const getUserByRole = async (role) =>{
+    try{
+    const response = await axiosInstance.get(`/api/user/getAllUsers?role=${role}`);
+    return response.data
+    }catch(error){
+        return error;
+    }
+}
+
+
+
+
+initialState: {
+  profile: null,
+  role: null,
+  filteredUsers: [],  // NEW
+},
+
+reducers: {
+  setUser: (state, action) => {
+    state.profile = action.payload.profile;
+    state.role = action.payload.role;
+  },
+  clearUser: (state) => {
+    state.profile = null;
+    state.role = null;
+    state.filteredUsers = [];
+  },
+  setFilteredUsers: (state, action) => {
+    state.filteredUsers = action.payload;
+  },
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+4.
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { getAllUsers } from '../api/user';
+import { setFilteredUsers } from '../redux/userSlice';
+import { showLoader, hideLoader } from '../redux/loaderSlice';
+import toast from 'react-hot-toast';
+
+const dispatch = useDispatch();
+const navigate = useNavigate();
+
+const handleRoleClick = async (role) => {
+  try {
+    dispatch(showLoader());
+    const response = await getAllUsers(role);
+    dispatch(hideLoader());
+
+    if (response.success) {
+      dispatch(setFilteredUsers(response.users));
+      navigate('/users'); // Navigate to display page
+    } else {
+      toast.error(response.message || 'Failed to fetch users.');
+    }
+  } catch (error) {
+    dispatch(hideLoader());
+    toast.error('Error fetching users.');
+  }
+};
+
+
+
+<ul>
+  <li onClick={() => handleRoleClick('agric-expert')}>
+    <FaUserTie className="me-2" /> View Agric Experts
+  </li>
+  <li onClick={() => handleRoleClick('farm-manager')}>
+    <FaUserCog className="me-2" /> View Farm Managers
+  </li>
+</ul>
