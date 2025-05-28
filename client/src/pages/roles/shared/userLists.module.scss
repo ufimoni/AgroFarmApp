@@ -1,0 +1,99 @@
+/* The styles for the userLists. */
+
+.container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.title {
+  font-weight: 700;
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: #2c3e50;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill,minmax(280px,1fr));
+  gap: 1.5rem;
+}
+
+.card {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: box-shadow 0.3s ease;
+  cursor: default;
+
+  &:hover {
+    box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+  }
+}
+
+.header {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #27ae60;
+}
+
+.userInfo {
+  flex: 1;
+
+  h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #34495e;
+  }
+
+  .email {
+    margin: 0.25rem 0;
+    font-size: 0.9rem;
+    color: #7f8c8d;
+    font-style: italic;
+  }
+
+  .bio {
+    font-size: 0.9rem;
+    color: #555;
+  }
+}
+
+.actions {
+  margin-top: 1.25rem;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.noUsers {
+  font-style: italic;
+  color: #999;
+  text-align: center;
+  grid-column: 1 / -1;
+}
+@media (max-width: 480px) {
+  .card {
+    padding: 1rem;
+  }
+
+  .avatar {
+    width: 48px;
+    height: 48px;
+  }
+
+  .title {
+    font-size: 1.25rem;
+  }
+}

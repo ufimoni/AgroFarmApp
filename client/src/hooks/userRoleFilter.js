@@ -9,7 +9,7 @@ const userRoleFilter = () =>{
 const dispatch = useDispatch();
 
 /// create a role click to handle the role functions
-const handleRoleClick = async () =>{
+const handleRoleClick = async (role) =>{
  try{
 dispatch(showLoader());
 const response = await getUserByRole(role)

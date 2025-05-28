@@ -3,6 +3,8 @@ import { Routes, Route} from 'react-router-dom'
 import Dashboard from './Dashboard';
 import Overview from './sections/Overview' /// for only overview
 import Task from './sections/Tasks'
+import FarmManagers from './../shared/Managers';
+import AgroExperts from './../shared/AgricExperts';
 import ChatArea from './sections/ChatArea'
 function FarmerRoutes(){
     return(
@@ -12,6 +14,11 @@ function FarmerRoutes(){
         <Route index element={<Overview />} />
         <Route path="tasks" element={<Task/>} />
         <Route path="chat" element={<ChatArea />} />
+
+        {/*The Routes for the other stakeholder*/}
+        <Route path="managers" element={<FarmManagers/>}/>
+         <Route path="experts" element={<AgroExperts/>}/>
+        <Route/>
       </Route>
     </Routes>
     )
