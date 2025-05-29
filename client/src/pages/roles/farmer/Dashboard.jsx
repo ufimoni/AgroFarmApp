@@ -8,10 +8,6 @@ function Dashboard() {
   const [ user, setUser ] = useState(null);
 
 
-
-
-
-  
   useEffect(() => {
     async function fetchUser() {
       const response = await getLoggedUser();

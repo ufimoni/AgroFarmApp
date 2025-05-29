@@ -97,3 +97,31 @@
     font-size: 1.25rem;
   }
 }
+
+
+/*The styling for the avatar or image section*/
+
+.avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #27ae60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+.initialsAvatar {
+  background-color: #27ae60;  /* green background */
+  color: white;               /* white text */
+  text-transform: uppercase;
+}
+
+.iconAvatar {
+  background-color: #ccc;
+  color: #555;
+  font-size: 2rem;
+}
