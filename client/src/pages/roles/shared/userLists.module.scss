@@ -106,7 +106,8 @@
   height: 72px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #27ae60;
+  // border: 2px solid #27ae60;
+  border: #27ae60;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -114,14 +115,12 @@
   font-size: 1.5rem;
 }
 
-.initialsAvatar {
-  background-color: #27ae60;  /* green background */
-  color: white;               /* white text */
-  text-transform: uppercase;
-}
+
 
 .iconAvatar {
-  background-color: #ccc;
-  color: #555;
+  // background-color: #ccc;
+  // color: #555;
+  background-color: #27ae60;
+  color: #fff;
   font-size: 2rem;
 }

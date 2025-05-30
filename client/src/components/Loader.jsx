@@ -1,5 +1,5 @@
 import { BeatLoader } from 'react-spinners';
-import React from 'react';
+//import React from 'react';
 import styles from './../style/loader.module.scss'
 
 function Loader(){

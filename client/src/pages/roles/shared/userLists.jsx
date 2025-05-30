@@ -2,25 +2,30 @@ import { FaUser } from 'react-icons/fa';  // user icon from react-icons
 import styles from './userLists.module.scss';
 
 // Get initials from firstname and lastname
-const getUserInitials = (firstname = '', lastname = '') => {
-  const firstInitial = firstname?.[0]?.toUpperCase() || '';
-  const lastInitial = lastname?.[0]?.toUpperCase() || '';
-  return firstInitial + lastInitial;
-};
+// const getUserInitials = (firstname = '', lastname = '') => {
+//   const firstInitial = firstname?.[0]?.toUpperCase() || '';
+//   const lastInitial = lastname?.[0]?.toUpperCase() || '';
+//   return firstInitial + lastInitial;
+// };
 
 const renderAvatar = (user) => {
   if (user.image) {
-    return <img src={user.image} alt={`${user.firstname} ${user.lastname} avatar`} className={styles.avatar} />;
+    return <img src={user.image}
+     alt={`${user.firstname} 
+     ${user.lastname} avatar`}
+      className={styles.avatar
+        
+      } />;
   }
 
-  const initials = getUserInitials(user.firstname, user.lastname);
-  if (initials) {
-    return (
-      <div className={`${styles.avatar} ${styles.initialsAvatar}`}>
-        {initials}
-      </div>
-    );
-  }
+  // const initials = getUserInitials(user.firstname, user.lastname);
+  // if (initials) {
+  //   return (
+  //     <div className={`${styles.avatar} ${styles.initialsAvatar}`}>
+  //       {initials}
+  //     </div>
+  //   );
+  // } use this initials
 
   // fallback user icon
   return (

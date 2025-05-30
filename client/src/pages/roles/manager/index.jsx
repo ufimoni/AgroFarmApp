@@ -1,4 +1,5 @@
-function Manager(){
+import Dashboard from "./Dasboard";
+function ManagerRoutes(){
     return(
         <div> <h1>
             This is a Farm Manager Page 
@@ -6,4 +7,4 @@ function Manager(){
              </div>
     )
 }
-export default Manager;
+export default ManagerRoutes;

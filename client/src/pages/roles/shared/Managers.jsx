@@ -7,7 +7,7 @@ import { getUserByRole } from './../../../api/user';
 import toast from 'react-hot-toast';
 import UserListPage from './userLists';
 
-const AgroExperts = () => {
+const FarmManagers = () => {
   const dispatch = useDispatch();
 const users = useSelector((state) => state.user.roleBasedUsers || []);
 
@@ -54,5 +54,5 @@ const users = useSelector((state) => state.user.roleBasedUsers || []);
   );
 };
 
-export default AgroExperts;
+export default FarmManagers;
 //// This is the lists of farm managers

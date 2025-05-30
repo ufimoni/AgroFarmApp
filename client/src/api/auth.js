@@ -19,7 +19,8 @@ export const LoginUser = async (user) =>{
 }
 export const logoutUser = async (user) =>{
     try{
-     const response = await axiosInstance.post('/api/auth/login', user);
+     const response = await axiosInstance.post('/api/auth/logout', user);
+     return response.data
     }catch(error){
         return error;
     }

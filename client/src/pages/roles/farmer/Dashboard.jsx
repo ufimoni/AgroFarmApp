@@ -3,7 +3,7 @@ import Sidebar from './components/sidebar' // should be in smaller s.
 import Header from './components/Header'
 import { Outlet } from 'react-router-dom';
 import styles from './farmStyles/dashboard.module.scss';
-import { getLoggedUser } from '../../../api/user';
+import { getLoggedUser } from './../../../api/user';
 function Dashboard() {
   const [ user, setUser ] = useState(null);
 
