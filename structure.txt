@@ -157,6 +157,52 @@ farmer/
 
 
 
+const mongoose = require('mongoose');
+
+const ProfileSchema = new mongoose.Schema({
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+    unique: true,
+  },
+  fullName: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  avatarUrl: {
+    type: String,
+    default: '', // optional: store URL or path to avatar image
+  },
+  contactNumber: {
+    type: String,
+  },
+  address: {
+    street: String,
+    city: String,
+    state: String,
+    postalCode: String,
+    country: String,
+  },
+  bio: {
+    type: String,
+    maxlength: 500,
+  },
+  // Additional role-specific fields can go here or in separate models if needed
+  expertiseAreas: [String],  // For agro-expert or farm-manager roles
+  farmDetails: {
+    farmName: String,
+    farmSize: Number, // e.g. hectares or acres
+    cropsGrown: [String],
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
+module.exports = mongoose.model('Profile', ProfileSchema);
 
 
 
@@ -224,9 +270,311 @@ export default ProtectedRoute;
 
 
 
+///////////////////////////////////////////////////////////////////////
+======================================================================
+//////////////////////////////////////////////////////////////////////
+=====================================================================
+==================== ADMIN SECTIONS AND FUNCTIONALITY================
+
+✅ 1. System Configuration & Settings
+Update farm-wide system settings (e.g., limits, API keys, data retention policy).
+
+Configure role permissions dynamically (RBAC).
+
+Set up default preferences for new users.
+
+✅ 2. Content Moderation
+Review and delete inappropriate or outdated content.
+
+Approve or reject submitted farm profiles or expert recommendations.
+
+Manage FAQs, announcements, or platform-wide news.
+
+✅ 3. Farm and Task Oversight
+View and manage all farms registered in the system.
+
+Assign or reassign farm-managers to specific farms.
+
+Track progress of tasks across farms.
+
+✅ 4. Audit Logs & Activity Tracking
+Monitor logs for all system actions (user login, data edits, deletions).
+
+See which users performed which actions.
+
+Detect suspicious or unusual behavior.
+
+✅ 5. Analytics & Reports
+View dashboards with:
+
+User growth
+
+Farm production metrics
+
+Task completion rates
+
+Messaging activity
+
+Export reports for stakeholders or regulatory use.
+
+✅ 6. Messaging & Notifications
+Broadcast announcements to all users or role-based groups (e.g., all managers).
+
+Manage system-wide notifications.
+
+View messaging traffic and unresolved support issues.
+
+✅ 7. Data Integrity & Recovery
+Restore soft-deleted users, profiles, or farms.
+
+Backup or export data.
+
+Initiate data cleanups if needed.
+
+✅ 8. Support & Escalations
+Respond to or reassign tickets submitted via a contact form.
+
+Escalate technical or operational issues.
+
+View submitted feedback and bug reports.
+
+✅ 9. Subscription & Payment Management (if applicable)
+View payment history or manage billing issues.
+
+Approve or reject subscription upgrade/downgrade requests.
+
+✅ 10. Security Management
+Force logout or lock out compromised accounts.
+
+Change roles/permissions in case of misuse.
+
+Manage authentication settings (password policies, 2FA).
 
 
 
+
+
+
+
+
+
+const Profile = require('../models/profileModel');
+
+// Create or update profile
+const createOrUpdateProfile = async (req, res) => {
+  try {
+    const userId = req.user._id; // assumes authentication middleware sets req.user
+
+    const existingProfile = await Profile.findOne({ user: userId });
+
+    if (existingProfile) {
+      // Update existing profile
+      const updatedProfile = await Profile.findOneAndUpdate(
+        { user: userId },
+        { ...req.body },
+        { new: true, runValidators: true }
+      );
+      return res.status(200).json({ success: true, profile: updatedProfile });
+    } else {
+      // Create new profile
+      const profile = new Profile({
+        user: userId,
+        ...req.body,
+      });
+      await profile.save();
+      return res.status(201).json({ success: true, profile });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Get profile for logged-in user
+const getMyProfile = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const profile = await Profile.findOne({ user: userId }).populate('user', 'firstname lastname email role');
+    if (!profile) return res.status(404).json({ success: false, message: 'Profile not found' });
+
+    res.status(200).json({ success: true, profile });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Get profile by user ID (admin use)
+const getProfileByUserId = async (req, res) => {
+  try {
+    const profile = await Profile.findOne({ user: req.params.userId }).populate('user', 'firstname lastname email role');
+    if (!profile) return res.status(404).json({ success: false, message: 'Profile not found' });
+
+    res.status(200).json({ success: true, profile });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Update profile (partial)
+const updateProfile = async (req, res) => {
+  try {
+    const updated = await Profile.findOneAndUpdate(
+      { user: req.user._id },
+      { $set: req.body },
+      { new: true, runValidators: true }
+    );
+
+    if (!updated) return res.status(404).json({ success: false, message: 'Profile not found' });
+
+    res.status(200).json({ success: true, profile: updated });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Update only the image
+const updateProfileImage = async (req, res) => {
+  try {
+    const { image } = req.body;
+
+    const profile = await Profile.findOneAndUpdate(
+      { user: req.user._id },
+      { $set: { Image: image } },
+      { new: true, runValidators: true }
+    );
+
+    if (!profile) return res.status(404).json({ success: false, message: 'Profile not found' });
+
+    res.status(200).json({ success: true, profile });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Delete profile
+const deleteProfile = async (req, res) => {
+  try {
+    const deleted = await Profile.findOneAndDelete({ user: req.user._id });
+    if (!deleted) return res.status(404).json({ success: false, message: 'Profile not found' });
+
+    res.status(200).json({ success: true, message: 'Profile deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+module.exports = {
+  createOrUpdateProfile,
+  getMyProfile,
+  getProfileByUserId,
+  updateProfile,
+  updateProfileImage,
+  deleteProfile,
+};
+
+
+
+// controllers/profileController.js
+
+const Profile = require('./../models/profileModel');
+const asyncErrorHandler = require('./../middlewares/asyncErrorHandler');
+const Users = require('./../models/userModel');
+const cloudinary = require('../utils/cloudinary'); // Ensure this exists and is properly configured
+
+// Unified response helper
+const sendResponse = (res, success, message, data = null, status = 200) => {
+  return res.status(status).json({ success, message, data });
+};
+
+// Create Profile
+exports.createProfile = asyncErrorHandler(async (req, res) => {
+  const { fullName, phone, address, bio, expertiseAreas, farmDetails } = req.body;
+
+  const existingProfile = await Profile.findOne({ user: req.user._id });
+  if (existingProfile) {
+    return sendResponse(res, false, "Profile already exists. Please update it.", null, 400);
+  }
+
+  const profile = new Profile({
+    user: req.user._id,
+    fullName,
+    phone,
+    address,
+    bio,
+    expertiseAreas,
+    farmDetails
+  });
+
+  const newProfile = await profile.save();
+  return sendResponse(res, true, "Profile created successfully.", newProfile);
+});
+
+// Get My Profile
+exports.getMyProfile = asyncErrorHandler(async (req, res) => {
+  const profile = await Profile.findOne({ user: req.user._id }).populate('user', '-password');
+  if (!profile) return sendResponse(res, false, "Profile not found.", null, 404);
+  return sendResponse(res, true, "Fetched profile successfully.", profile);
+});
+
+// Get All Profiles
+exports.getAllProfiles = asyncErrorHandler(async (req, res) => {
+  const profiles = await Profile.find({}).populate('user', '-password');
+  if (!profiles.length) return sendResponse(res, false, "No profiles found.", null, 404);
+  return sendResponse(res, true, "Fetched all profiles successfully.", profiles);
+});
+
+// Get Profile by User ID
+exports.getProfileByUserId = asyncErrorHandler(async (req, res) => {
+  const profile = await Profile.findOne({ user: req.params.userId }).populate('user', '-password');
+  if (!profile) return sendResponse(res, false, "Profile does not exist.", null, 404);
+  return sendResponse(res, true, "Fetched profile by user ID successfully.", profile);
+});
+
+// Update Profile
+exports.updateProfile = asyncErrorHandler(async (req, res) => {
+  const updates = req.body;
+  const updatedProfile = await Profile.findOneAndUpdate(
+    { user: req.user._id },
+    { $set: updates },
+    { new: true, runValidators: true }
+  );
+  if (!updatedProfile) return sendResponse(res, false, "Profile not found or not updated.", null, 404);
+  return sendResponse(res, true, "Profile updated successfully.", updatedProfile);
+});
+
+// Upload Profile Image
+exports.uploadProfileImage = asyncErrorHandler(async (req, res) => {
+  if (!req.file) {
+    return sendResponse(res, false, "No image file provided.", null, 400);
+  }
+
+  // Upload to Cloudinary
+  const result = await cloudinary.uploader.upload(req.file.path, {
+    folder: 'profileImages',
+    transformation: [{ width: 500, height: 500, crop: 'limit' }]
+  });
+
+  const updatedProfile = await Profile.findOneAndUpdate(
+    { user: req.user._id },
+    { $set: { profileImage: result.secure_url } },
+    { new: true }
+  );
+
+  if (!updatedProfile) return sendResponse(res, false, "Failed to update profile picture.", null, 400);
+  return sendResponse(res, true, "Profile picture updated successfully.", updatedProfile);
+});
+
+// Delete Profile (Soft Delete)
+exports.deleteProfile = asyncErrorHandler(async (req, res) => {
+  const profile = await Profile.findOne({ user: req.user._id });
+
+  if (!profile) return sendResponse(res, false, "Profile not found.", null, 404);
+
+  // Optional: Set deleted flag, or actually remove
+  await Profile.deleteOne({ user: req.user._id });
+
+  return sendResponse(res, true, "Profile deleted successfully.");
+});
 
 
 

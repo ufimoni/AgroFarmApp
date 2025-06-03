@@ -1,0 +1,57 @@
+
+.settingsDropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 300px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 1rem;
+  z-index: 1050;
+  border: 1px solid #ddd;
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+}
+
+.closeBtn {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+}
+
+.tabs {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+
+  .tabButton {
+    flex: 1;
+    padding: 0.4rem 0.75rem;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    font-weight: 600;
+    cursor: pointer;
+    color: #555;
+    transition: border-color 0.2s ease;
+
+    &.active {
+      border-color: #198754; /* Bootstrap success green */
+      color: #198754;
+    }
+
+    &:hover:not(.active) {
+      color: #198754;
+    }
+  }
+}
+
+.tabContent {
+  min-height: 120px;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.logoutBtn {
+  margin-top: 1rem;
+  font-weight: 600;
+}

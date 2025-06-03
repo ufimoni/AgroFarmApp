@@ -6,12 +6,18 @@ import {
   FaUsers,
   FaMoneyBill,
   FaChartPie,
+  FaUserCog,
+  FaUserTie
 } from "react-icons/fa";
 import styles from "./../managerStyles/sidebar.module.scss";
+import userRoleFilter from "../../../../hooks/userRoleFilter";
+//// add the bg-dark before the text-white p-3  the sidenar
+
 
 function SidebarManager() {
+  const handleRoleClick = userRoleFilter();
   return (
-    <div className={`sidebar bg-dark text-white p-3 ${styles.sidebar}`}>
+    <div className={`sidebar text-white p-3 ${styles.sidebar}`}>
       <h4 className={`text-white mb-4 ${styles.title}`}>Manager Panel</h4>
       <ul className={`list-unstyled ${styles.menu}`}>
         <li>
@@ -45,9 +51,25 @@ function SidebarManager() {
           </NavLink>
         </li>
         <li>
-          <NavLink to="/manager/reports" className={`${styles.link} d-flex align-items-center`}>
+          <NavLink to="/manager/reports" className={`${styles.link} d-flex align-items-center mb-3`}>
             <FaChartPie className="me-2" />
             Reporting & Analytics
+          </NavLink>
+        </li>
+           <li>
+          <NavLink to="/manager/farmers" className={`${styles.link} d-flex align-items-center mb-3`}
+          onClick={()=>{handleRoleClick('farmer')}}
+          >
+            <FaUserCog className="me-2" />
+            Meet Farmers 
+          </NavLink>
+        </li>
+           <li>
+          <NavLink to="/manager/experts" className={`${styles.link} d-flex align-items-center mb-3`}
+            onClick={()=>{handleRoleClick('agro-expert')}} 
+          >
+            <FaUserTie className="me-2" />
+            Meet Agric-Experts
           </NavLink>
         </li>
       </ul>

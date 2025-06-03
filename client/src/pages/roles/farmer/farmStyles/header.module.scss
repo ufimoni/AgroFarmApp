@@ -18,11 +18,25 @@
 
 .icon {
   cursor: pointer;
-  transition: color 0.3s;
+  transition: color 0.3s ease-in-out;
 
-  &:hover {
-    color: #28a745;
-  }
+}
+.bell {
+  color: #6c757d;
+  cursor: pointer;
+  transition: color 0.3s ease-in-out;
+}
+
+.bell:hover{
+  color: rgb(216, 216, 36);
+}
+.settings{
+  color: #6c757d;
+  cursor: pointer;
+  transition: color 0.3s ease-in-out;
+}
+.settings:hover{
+  color: aqua;
 }
 
 .userInfo {

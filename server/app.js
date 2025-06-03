@@ -4,6 +4,7 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const authRoutes = require('./Routes/authRoutes');
 const userRoutes = require('./Routes/userRoutes')
+const profileRoutes = require('./Routes/profileRoutes')
 const app = express();
 app.use(morgan('dev'));
 
@@ -22,6 +23,7 @@ app.use(cors({
 
 app.use('/api/auth',authRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/profile', profileRoutes);
 
 
 /// Login out the activities in this application

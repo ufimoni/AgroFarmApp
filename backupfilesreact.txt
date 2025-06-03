@@ -349,6 +349,17 @@ reducers: {
 }
 
 
+manager/
+├── Dashboard.jsx          ← Shared layout with sidebar/header
+├── index.jsx              ← Routes for all subpages
+├── components/
+│   ├── Sidebar.jsx
+│   ├── Header.jsx
+├── sections/
+│   ├── ManagerOverview.jsx     ← Summary of assigned farms and tasks
+│   ├── ManageFarmers.jsx       ← List/view/manage assigned farmers
+│   ├── AssignTasks.jsx         ← Interface to assign tasks to farmers
+│   └── ChatArea.jsx            ← Real-time messaging with farmers/others
 
 
 

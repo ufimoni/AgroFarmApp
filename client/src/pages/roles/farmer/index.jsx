@@ -10,6 +10,8 @@ import Pest_Disease from './components/Pest_Alerts';
 import Weather from './components/Weather';
 import FarmManagers from './../shared/Managers';
 import AgricExperts from './../shared/AgricExperts';
+import Settings from './components/Settings';
+import FarmerProfile from './components/profile';
 import ChatArea from './sections/ChatArea'
 
 function FarmerRoutes(){
@@ -25,12 +27,12 @@ function FarmerRoutes(){
         <Route path="alerts" element={<Pest_Disease />} />
         <Route path="crops" element={<CropsManagement />} />
         <Route path="weather" element={<Weather />} />
-
-
+        <Route path="settings" element={<Settings/>}/>
+        <Route path="farmerProfile"  element={<FarmerProfile/>}/>
         {/*The Routes for the other stakeholder*/}
         <Route path="managers" element={<FarmManagers/>}/>
          <Route path="experts" element={<AgricExperts/>}/>
-        <Route/>
+      
       </Route>
     </Routes>
     )
