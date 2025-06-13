@@ -40,8 +40,9 @@ const users = useSelector((state) => state.user.roleBasedUsers || []);
   };
 
   const handleViewProfile = (user) => {
-    console.log('View profile of', user.name);
+    console.log('View profile of', user.firstname);
     // TODO: Route to profile page (to be implemented)
+    
   };
 
   return (

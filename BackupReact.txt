@@ -1,0 +1,683 @@
+/////// This Backup files for the components
+import { useEffect, useState } from 'react';
+import { TextField, Button, Typography, CircularProgress, Box, Paper } from '@mui/material';
+import { useForm } from 'react-hook-form';
+import { createProfile, getMyProfile } from './../../../../api/profile';
+import toast from 'react-hot-toast';
+import styles from './../farmStyles/profile.module.scss';
+
+const FarmerProfile = () => {
+  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm();
+  const [loading, setLoading] = useState(false);
+  const [profile, setProfile] = useState(null);
+
+  useEffect(() => {
+    async function fetchProfile() {
+      setLoading(true);
+      try {
+        const response = await getMyProfile();
+        if (response.success) {
+          setProfile(response.data);
+          reset(response.data);
+        }
+      } catch (error) {
+        toast.error('Failed to load profile');
+      }
+      setLoading(false);
+    }
+
+    fetchProfile();
+  }, [reset]);
+
+  const onSubmit = async (data) => {
+    setLoading(true);
+    try {
+      // Convert cropsGrown from string to array
+      if (data.farmDetails?.cropsGrown) {
+        data.farmDetails.cropsGrown = data.farmDetails.cropsGrown
+          .split(',')
+          .map(crop => crop.trim());
+      }
+
+      const response = await createProfile(data);
+      if (response.success) {
+        toast.success('Profile saved successfully');
+        setProfile(response.data);
+        reset(response.data);
+      } else {
+        toast.error('Failed to save profile');
+      }
+    } catch (error) {
+      toast.error(error.message || 'Error saving profile');
+    }
+    setLoading(false);
+  };
+
+  if (loading) {
+    return (
+      <Box className={styles.loaderWrapper}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  return (
+    <Paper className={styles.container} elevation={3}>
+      <Typography variant="h4" component="h1" gutterBottom>
+        {profile ? 'Update' : 'Create'} Farmer Profile
+      </Typography>
+
+      <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
+        <TextField
+          label="Full Name"
+          {...register('fullName', { required: 'Full name is required' })}
+          error={!!errors.fullName}
+          helperText={errors.fullName?.message}
+          fullWidth
+          margin="normal"
+        />
+
+        <TextField
+          label="Phone"
+          {...register('phone')}
+          fullWidth
+          margin="normal"
+        />
+
+        <TextField
+          label="Street"
+          {...register('address.street')}
+          fullWidth
+          margin="normal"
+        />
+
+        <TextField
+          label="City"
+          {...register('address.city')}
+          fullWidth
+          margin="normal"
+        />
+
+        <TextField
+          label="State"
+          {...register('address.state')}
+          fullWidth
+          margin="normal"
+        />
+
+        <TextField
+          label="Country"
+          {...register('address.country')}
+          fullWidth
+          margin="normal"
+        />
+
+        <TextField
+          label="Bio"
+          multiline
+          rows={3}
+          {...register('bio')}
+          fullWidth
+          margin="normal"
+        />
+
+        <TextField
+          label="Farm Name"
+          {...register('farmDetails.farmName')}
+          fullWidth
+          margin="normal"
+        />
+
+        <TextField
+          label="Farm Size (in acres)"
+          type="number"
+          {...register('farmDetails.farmSize')}
+          fullWidth
+          margin="normal"
+        />
+
+        <TextField
+          label="Crops Grown (comma-separated)"
+          {...register('farmDetails.cropsGrown')}
+          fullWidth
+          margin="normal"
+        />
+
+        <Button
+          variant="contained"
+          color="primary"
+          type="submit"
+          disabled={isSubmitting}
+          className={styles.submitButton}
+        >
+          {profile ? 'Update Profile' : 'Create Profile'}
+        </Button>
+      </form>
+
+      {profile && (
+        <Box className={styles.profileDisplay}>
+          <Typography variant="h5" component="h2" gutterBottom>
+            Profile Details
+          </Typography>
+          <Typography><strong>Name:</strong> {profile.fullName}</Typography>
+          <Typography><strong>Phone:</strong> {profile.phone || 'N/A'}</Typography>
+          <Typography>
+            <strong>Address:</strong> {profile.address?.street}, {profile.address?.city}, {profile.address?.state}, {profile.address?.country}
+          </Typography>
+          <Typography><strong>Bio:</strong> {profile.bio || 'N/A'}</Typography>
+          <Typography><strong>Farm:</strong> {profile.farmDetails?.farmName} - {profile.farmDetails?.farmSize} acres</Typography>
+          <Typography><strong>Crops:</strong> {profile.farmDetails?.cropsGrown?.join(', ') || 'N/A'}</Typography>
+        </Box>
+      )}
+    </Paper>
+  );
+};
+
+export default FarmerProfile;
+
+
+
+
+
+
+.container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+
+  @media (max-width: 768px) {
+    padding: 1.5rem 1rem;
+  }
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  .MuiTextField-root {
+    background-color: #f8f9fa;
+    border-radius: 6px;
+  }
+
+  .MuiFormHelperText-root {
+    color: #d32f2f;
+    font-size: 0.8rem;
+  }
+
+  .submitButton {
+    align-self: flex-start;
+    padding: 0.6rem 2rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    border-radius: 8px;
+    margin-top: 1rem;
+    transition: background-color 0.3s ease-in-out;
+
+    &:hover {
+      background-color: #1976d2;
+    }
+
+    @media (max-width: 600px) {
+      align-self: stretch;
+    }
+  }
+}
+
+.profileDisplay {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e0e0e0;
+
+  h2 {
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    color: #333;
+  }
+
+  p, span, div {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+    color: #444;
+  }
+
+  strong {
+    color: #212121;
+    font-weight: 600;
+  }
+}
+
+.loaderWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+
+  .MuiCircularProgress-root {
+    color: #1976d2;
+  }
+}
+
+/* Custom overrides for Material UI Paper */
+:global(.MuiPaper-root) {
+  border: 1px solid #f1f1f1;
+  transition: all 0.3s ease-in-out;
+  &:hover {
+    box-shadow: 0 6px 30px rgba(0, 0, 0, 0.08);
+  }
+}
+
+/* Typography overrides */
+:global(.MuiTypography-root) {
+  color: #2c3e50;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+  .container {
+    margin: 1rem;
+  }
+
+  .form {
+    .submitButton {
+      font-size: 0.9rem;
+    }
+
+    .MuiTextField-root {
+      font-size: 0.95rem;
+    }
+  }
+
+  .profileDisplay {
+    h2 {
+      font-size: 1.3rem;
+    }
+  }
+}
+
+/* Additional polish */
+.form input,
+.form textarea {
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background-color: #fafafa;
+  transition: border-color 0.2s ease;
+
+  &:focus {
+    border-color: #1976d2;
+    outline: none;
+  }
+}
+
+.form label {
+  font-weight: 500;
+  margin-bottom: 0.3rem;
+  color: #555;
+}
+
+.profileDisplay div {
+  padding: 0.4rem 0;
+}
+
+.profileDisplay span {
+  display: inline-block;
+  margin-right: 0.5rem;
+  background-color: #f1f1f1;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+
+
+
+
+<div className={styles.profileContainer}>
+  <img src={profile.image || '/default-avatar.png'} className={styles.profileImage} />
+</div>
+
+
+
+
+.profileContainer {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', sans-serif;
+  color: #333;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    color: #2a4d69;
+  }
+
+  p {
+    font-size: 1.1rem;
+    margin: 0.5rem 0;
+    color: #555;
+
+    strong {
+      color: #1b3a57;
+    }
+  }
+}
+
+.profileImage {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #2a4d69;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .profileContainer {
+    padding: 1.5rem;
+    h1 {
+      font-size: 1.7rem;
+    }
+    p {
+      font-size: 1rem;
+    }
+  }
+
+  .profileImage {
+    width: 140px;
+    height: 140px;
+  }
+}
+
+@media (max-width: 480px) {
+  .profileContainer {
+    padding: 1rem;
+    h1 {
+      font-size: 1.5rem;
+    }
+    p {
+      font-size: 0.95rem;
+    }
+  }
+
+  .profileImage {
+    width: 120px;
+    height: 120px;
+  }
+}
+
+// Optional loading/error message
+.loadingMessage, .errorMessage {
+  text-align: center;
+  font-size: 1.2rem;
+  margin-top: 2rem;
+}
+
+.loadingMessage {
+  color: #007bff;
+}
+
+.errorMessage {
+  color: #dc3545;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////
+////////////////////////////////////////
+
+
+
+
+import { useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { getProfileByUserId } from '../../api/profile'; // Adjust path as needed
+import styles from './uniqueProfile.module.scss';
+
+function UniqueProfile() {
+  const { id } = useParams();
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const data = await getProfileByUserId(id);
+        setProfile(data);
+      } catch (err) {
+        setError('Failed to load profile.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProfile();
+  }, [id]);
+
+  if (loading) return <p className={styles.loadingMessage}>Loading profile...</p>;
+  if (error) return <p className={styles.errorMessage}>{error}</p>;
+
+  return (
+    <div className={styles.profileContainer}>
+      <h1>{profile.fullName}</h1>
+      {profile.image && (
+        <img
+          src={profile.image}
+          alt={`${profile.fullName}'s avatar`}
+          className={styles.profileImage}
+        />
+      )}
+
+      <p><strong>Phone:</strong> {profile.phone}</p>
+      <p><strong>Bio:</strong> {profile.bio}</p>
+
+      <div>
+        <p><strong>Expertise Areas:</strong></p>
+        <ul>
+          {profile.expertiseAreas?.map((area, i) => (
+            <li key={i}>{area}</li>
+          ))}
+        </ul>
+      </div>
+
+      <div>
+        <p><strong>Address:</strong></p>
+        <p>{profile.address.street}, {profile.address.city}, {profile.address.state}, {profile.address.postalCode}, {profile.address.country}</p>
+      </div>
+
+      <div>
+        <p><strong>Farm Details:</strong></p>
+        <p><strong>Farm Name:</strong> {profile.farmDetails.farmName}</p>
+        <p><strong>Farm Size:</strong> {profile.farmDetails.farmSize} acres</p>
+        <p><strong>Crops Grown:</strong> {profile.farmDetails.cropsGrown.join(', ')}</p>
+      </div>
+    </div>
+  );
+}
+
+export default UniqueProfile;
+
+
+
+
+////////////////////////////////////////////////uniqueProfile css.
+.profileContainer {
+  max-width: 850px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  font-family: 'Segoe UI', sans-serif;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+
+  h1 {
+    font-size: 2rem;
+    color: #1f3b57;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    font-size: 1.1rem;
+    margin: 0.5rem 0;
+    color: #444;
+
+    strong {
+      color: #2a4d69;
+    }
+  }
+
+  img {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 1.5rem;
+    border: 4px solid #1f3b57;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+
+  ul {
+    list-style: disc;
+    padding-left: 1.5rem;
+    margin: 0.5rem 0 1rem;
+    text-align: left;
+    width: 100%;
+    max-width: 600px;
+
+    li {
+      margin: 0.3rem 0;
+      font-size: 1rem;
+    }
+  }
+}
+
+.section {
+  width: 100%;
+  max-width: 700px;
+  text-align: left;
+  background: #f9f9f9;
+  padding: 1rem 1.5rem;
+  margin: 1rem 0;
+  border-left: 4px solid #2a4d69;
+  border-radius: 0.5rem;
+
+  p {
+    margin: 0.4rem 0;
+    font-size: 1.05rem;
+
+    strong {
+      color: #1b3a57;
+    }
+  }
+}
+
+// Loading & Error styles
+.loadingMessage,
+.errorMessage {
+  text-align: center;
+  font-size: 1.2rem;
+  margin-top: 2rem;
+  font-weight: 500;
+}
+
+.loadingMessage {
+  color: #0d6efd;
+}
+
+.errorMessage {
+  color: #dc3545;
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .profileContainer {
+    padding: 1.5rem;
+
+    h1 {
+      font-size: 1.7rem;
+    }
+
+    p {
+      font-size: 1rem;
+    }
+
+    img {
+      width: 140px;
+      height: 140px;
+    }
+
+    ul {
+      padding-left: 1rem;
+    }
+  }
+
+  .section {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .profileContainer {
+    padding: 1rem;
+
+    h1 {
+      font-size: 1.5rem;
+    }
+
+    p {
+      font-size: 0.95rem;
+    }
+
+    img {
+      width: 120px;
+      height: 120px;
+    }
+  }
+
+  .section {
+    padding: 0.8rem;
+    font-size: 0.95rem;
+  }
+}

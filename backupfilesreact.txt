@@ -411,3 +411,223 @@ const handleRoleClick = async (role) => {
     <FaUserCog className="me-2" /> View Farm Managers
   </li>
 </ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// src/redux/profileSlice.js
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import {
+  getMyProfile,
+  createProfile,
+  updateProfile,
+  deleteProfile,
+  uploadProfileImage,
+} from '../api/profile';
+
+export const fetchMyProfile = createAsyncThunk(
+  'profile/fetchMyProfile',
+  async (_, thunkAPI) => {
+    try {
+      const response = await getMyProfile();
+      if (response.success) return response.data;
+      return thunkAPI.rejectWithValue(response.message || 'Failed to fetch profile');
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+export const saveProfile = createAsyncThunk(
+  'profile/saveProfile',
+  async (profileData, thunkAPI) => {
+    try {
+      const response = await createProfile(profileData);
+      if (response.success) return response.data;
+      return thunkAPI.rejectWithValue(response.message || 'Profile creation failed');
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+export const modifyProfile = createAsyncThunk(
+  'profile/modifyProfile',
+  async (updates, thunkAPI) => {
+    try {
+      const response = await updateProfile(updates);
+      if (response.success) return response.data;
+      return thunkAPI.rejectWithValue(response.message || 'Profile update failed');
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+export const removeProfile = createAsyncThunk(
+  'profile/removeProfile',
+  async (_, thunkAPI) => {
+    try {
+      const response = await deleteProfile();
+      if (response.success) return response.data;
+      return thunkAPI.rejectWithValue(response.message || 'Profile deletion failed');
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+export const uploadImage = createAsyncThunk(
+  'profile/uploadImage',
+  async (formData, thunkAPI) => {
+    try {
+      const response = await uploadProfileImage(formData);
+      if (response.success) return response.data;
+      return thunkAPI.rejectWithValue(response.message || 'Image upload failed');
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+const profileSlice = createSlice({
+  name: 'profile',
+  initialState: {
+    profile: null,
+    loading: false,
+    error: null,
+  },
+  reducers: {
+    clearProfile: (state) => {
+      state.profile = null;
+      state.error = null;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchMyProfile.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchMyProfile.fulfilled, (state, action) => {
+        state.loading = false;
+        state.profile = action.payload;
+      })
+      .addCase(fetchMyProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(saveProfile.fulfilled, (state, action) => {
+        state.profile = action.payload;
+      })
+      .addCase(modifyProfile.fulfilled, (state, action) => {
+        state.profile = action.payload;
+      })
+      .addCase(removeProfile.fulfilled, (state) => {
+        state.profile = null;
+      })
+      .addCase(uploadImage.fulfilled, (state, action) => {
+        state.profile = action.payload;
+      });
+  },
+});
+
+export const { clearProfile } = profileSlice.actions;
+
+export default profileSlice.reducer;
+
+
+
+
+
+
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { getProfileByUserId } from '../../api/profile';
+import {
+  Card,
+  CardContent,
+  Typography,
+  Avatar,
+  Grid,
+  CircularProgress,
+} from '@mui/material';
+import styles from './viewSelectedProfile.module.scss';
+
+function ViewSelectedProfile() {
+  const { userId } = useParams();
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const fetchProfile = async () => {
+    setLoading(true);
+    const res = await getProfileByUserId(userId);
+    if (res.success) {
+      setProfile(res.data);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchProfile();
+  }, [userId]);
+
+  if (loading) {
+    return <div className={styles.loader}><CircularProgress /></div>;
+  }
+
+  return (
+    <div className={styles.profileContainer}>
+      <Card className={styles.card}>
+        <CardContent>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={4} className={styles.avatarContainer}>
+              <Avatar
+                src={profile?.profileImage || ''}
+                alt={profile?.fullName}
+                sx={{ width: 120, height: 120 }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={8}>
+              <Typography variant="h5" className={styles.name}>
+                {profile?.fullName}
+              </Typography>
+              <Typography variant="body1" className={styles.info}>
+                <strong>Email:</strong> {profile?.user?.email}
+              </Typography>
+              <Typography variant="body1" className={styles.info}>
+                <strong>Phone:</strong> {profile?.phone}
+              </Typography>
+              <Typography variant="body1" className={styles.info}>
+                <strong>Address:</strong> {profile?.address}
+              </Typography>
+              <Typography variant="body1" className={styles.info}>
+                <strong>Bio:</strong> {profile?.bio}
+              </Typography>
+              <Typography variant="body1" className={styles.info}>
+                <strong>Expertise:</strong> {profile?.expertiseAreas?.join(', ') || 'N/A'}
+              </Typography>
+              <Typography variant="body1" className={styles.info}>
+                <strong>Farm Details:</strong> {profile?.farmDetails || 'N/A'}
+              </Typography>
+            </Grid>
+          </Grid>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+export default ViewSelectedProfile;

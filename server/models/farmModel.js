@@ -1,22 +1,58 @@
 const mongoose = require('mongoose');
 
 const farmSchema = new mongoose.Schema({
-  name: String,
-  location: String,
-  owner: {
+   name: {
+      type: String,
+      required: true,
+      trim: true
+   },
+   location: {
+      address: String,
+      city: String,
+      state: String,
+      region: String,
+      country: String,
+      coordinates: {
+         longitude: Number,
+         latitude: Number
+      },
+   },
+   sizeInAcres: {
+     type: Number,
+     required: true
+   },
+   owner: {
     type: mongoose.Schema.Types.ObjectId,
-     ref: 'User' },
-  crops: [{
-     type: mongoose.Schema.Types.ObjectId, 
-     ref: 'Crop'
-     }],
-  tasks: [{ 
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: 'Task'
- }],
-  equipment: [{
+    ref: 'User'
+   },
+   manager: {
      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Equipment' }]
+     ref: 'User'
+   },
+   crops: [{
+    type: String
+   }],
+
+  isActive: {
+  type: Boolean,
+  default: true,
+  },
+
+  image: {
+   type: String
+  },
+
+},
+{timestamps: true
+
 });
 
-module.exports = mongoose.model('Farm', farmSchema);
+
+/*Now we want to save and display or return to the clients all active users for soft delete*/
+farmSchema.pre(/^find/, function(next){
+this.find({ isActive: {$ne: false}})
+next();
+})
+
+const Farm = mongoose.model('Farm', farmSchema);
+module.exports = Farm;

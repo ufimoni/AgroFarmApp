@@ -10,6 +10,7 @@ import Farmer from './pages/roles/farmer';
 import Manager from './pages/roles/manager';
 import Expert from './pages/roles/expert';
 import Loader from './components/Loader';
+import UniqueProfile from './pages/UniqueProfile';
 import ProtectedRoute from './components/ProtectedRoute'; // 
 
 import './App.scss';
@@ -62,6 +63,14 @@ function App() {
                 <Owner />
               </ProtectedRoute>
             }
+          />
+          <Route
+          path='/uniqueprofile/:id'
+          element={
+            <ProtectedRoute>
+              <UniqueProfile/>
+            </ProtectedRoute>
+          }
           />
 
           {/* 404 fallback */}

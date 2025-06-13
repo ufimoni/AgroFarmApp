@@ -65,3 +65,4 @@ exports.getAllUsers = asyncErrorHandler(async (req, res) => {
     });
   }
 });
+

@@ -1,6 +1,7 @@
 // src/pages/shared/FarmManagersPage.jsx
 import  { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { showLoader, hideLoader } from './../../../redux/loaderSlice';
 import { setRoleBasedUsers } from './../../../redux/userSlice';
 import { getUserByRole } from './../../../api/user';
@@ -9,6 +10,7 @@ import UserListPage from './userLists';
 
 const AgricExperts= () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 const users = useSelector((state) => state.user.roleBasedUsers || []);
 
   useEffect(() => {
@@ -20,9 +22,9 @@ const users = useSelector((state) => state.user.roleBasedUsers || []);
 
         if (response.success) {
           dispatch(setRoleBasedUsers(response.users));
-          toast.success('Farm Managers loaded successfully');
+          toast.success('Agric Experts loaded successfully');
         } else {
-          toast.error('Failed to load Farm Managers');
+          toast.error('Failed to load Agricutural experts');
         }
       } catch (error) {
         dispatch(hideLoader());
@@ -35,13 +37,15 @@ const users = useSelector((state) => state.user.roleBasedUsers || []);
 
   // Example handlers for buttons
   const handleStartChat = (user) => {
-    console.log('Start chat with', user.name);
+    console.log('Start chat with', user.firstname);
     // TODO: Integrate chat logic here
   };
 
   const handleViewProfile = (user) => {
-    console.log('View profile of', user.name);
+    console.log('View profile of', user.firstname);
     // TODO: Route to profile page (to be implemented)
+      navigate(`/uniqueprofile/${user._id}`);
+
   };
 
   return (

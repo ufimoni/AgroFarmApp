@@ -47,5 +47,12 @@ const ProfileSchema = new mongoose.Schema({
     },
 })
 
+
+/*Now we want to save and display or return to the clients all active users for soft delete*/
+ProfileSchema.pre(/^find/, function(next){
+this.find({ isActive: {$ne: false}})
+next();
+})
+
 const Profile = mongoose.model('Profile', ProfileSchema)
 module.exports = Profile;

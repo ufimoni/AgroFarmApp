@@ -44,5 +44,11 @@ const userSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
+/*Now we want to save and display or return to the clients all active users for soft delete*/
+userSchema.pre(/^find/, function(next){
+this.find({ isActive: {$ne: false}})
+next();
+})
+
 const Users = mongoose.model('User', userSchema);
 module.exports = Users;

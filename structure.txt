@@ -582,7 +582,95 @@ exports.deleteProfile = asyncErrorHandler(async (req, res) => {
 
 
 
+///////
+const Farm = require('../models/farmModel');
+const asyncErrorHandler = require('../middlewares/asyncErrorHandler');
+const sendResponse = require('../utils/sendResponse');
 
+// Create a new farm
+exports.createFarm = asyncErrorHandler(async (req, res) => {
+  try {
+    const { name, location, coordinates, size, soilType } = req.body;
+
+    const farm = new Farm({
+      name,
+      location,
+      coordinates,
+      size,
+      soilType,
+      owner: req.user._id,
+    });
+
+    await farm.save();
+
+    return sendResponse(res, true, 'Farm created successfully.', farm, 201);
+  } catch (error) {
+    return sendResponse(res, false, 'Failed to create farm.', error.message);
+  }
+});
+
+// Get all farms (admin only or public view)
+exports.getAllFarms = asyncErrorHandler(async (req, res) => {
+  try {
+    const farms = await Farm.find().populate('owner', '-password');
+    return sendResponse(res, true, 'All farms fetched.', farms);
+  } catch (error) {
+    return sendResponse(res, false, 'Failed to fetch farms.', error.message);
+  }
+});
+
+// Get farm by ID
+exports.getFarmById = asyncErrorHandler(async (req, res) => {
+  try {
+    const farm = await Farm.findById(req.params.id).populate('owner', '-password');
+    if (!farm) return sendResponse(res, false, 'Farm not found.', null, 404);
+    return sendResponse(res, true, 'Farm fetched successfully.', farm);
+  } catch (error) {
+    return sendResponse(res, false, 'Failed to fetch farm.', error.message);
+  }
+});
+
+// Update farm details
+exports.updateFarm = asyncErrorHandler(async (req, res) => {
+  try {
+    const updatedFarm = await Farm.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedFarm) return sendResponse(res, false, 'Farm not found.', null, 404);
+    return sendResponse(res, true, 'Farm updated successfully.', updatedFarm);
+  } catch (error) {
+    return sendResponse(res, false, 'Failed to update farm.', error.message);
+  }
+});
+
+// Soft delete farm (set isActive = false)
+exports.deleteFarm = asyncErrorHandler(async (req, res) => {
+  try {
+    const farm = await Farm.findById(req.params.id);
+
+    if (!farm) return sendResponse(res, false, 'Farm not found.', null, 404);
+
+    farm.isActive = false;
+    await farm.save();
+
+    return sendResponse(res, true, 'Farm deleted (soft delete).');
+  } catch (error) {
+    return sendResponse(res, false, 'Failed to delete farm.', error.message);
+  }
+});
+
+// Get farms by owner
+exports.getFarmsByOwner = asyncErrorHandler(async (req, res) => {
+  try {
+    const farms = await Farm.find({ owner: req.params.ownerId });
+    return sendResponse(res, true, 'Farms by owner fetched.', farms);
+  } catch (error) {
+    return sendResponse(res, false, 'Failed to fetch farms by owner.', error.message);
+  }
+});
 
 
 

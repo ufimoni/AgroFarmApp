@@ -7,4 +7,5 @@ router.route('/get-logged-user')
        .get(authMiddleware, userControl.getUserDetails)
 router.route('/getAllUsers')       
        .get(authMiddleware, userControl.getAllUsers)
+
  module.exports = router;      

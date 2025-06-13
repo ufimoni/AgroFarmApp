@@ -34,5 +34,14 @@ const logger = function(req, res, next){
 app.use(logger);
 
 
+//// Global Errors handlers.
+app.use('*', (req, res, next)=>{
+  res.status(404).json({
+    status: 'fail',
+    message: `Sorry Cant find${req.originalUrl} on this server, Page not found`
+  })
+  next();
+})
+
 
 module.exports = app;

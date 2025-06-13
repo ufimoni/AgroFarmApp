@@ -11,7 +11,7 @@ import styles from './userLists.module.scss';
 const renderAvatar = (user) => {
   if (user.image) {
     return <img src={user.image}
-     alt={`${user.firstname} 
+     alt={ `${user.firstname} 
      ${user.lastname} avatar`}
       className={styles.avatar
         

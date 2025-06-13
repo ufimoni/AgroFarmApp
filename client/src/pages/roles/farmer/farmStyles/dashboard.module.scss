@@ -1,0 +1,19 @@
+.dashboard {
+  display: flex;
+  height: 100vh;       // full viewport height
+  overflow: hidden;    // prevent scrolling on whole dashboard
+}
+
+.mainContent {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;    // disable scroll here as well
+}
+
+.main {
+  flex-grow: 1;
+  overflow: hidden;   // prevent main scrolling for default
+  padding: 1rem;
+}
