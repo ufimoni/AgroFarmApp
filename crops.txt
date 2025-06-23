@@ -1,0 +1,230 @@
+import { Grid, Card, CardMedia, CardContent, Typography } from '@mui/material';
+import maize from './../../../../assets/maize.jpg';
+import beans from './../../../../assets/beans.jpg';
+import carrots from './../../../../assets/carrots.jpg';
+import mango from './../../../../assets/mango.jpg';
+import potatoes from './../../../../assets/potatoes.jpg';
+import tomatoes from './../../../../assets/ripe-organic-tomatoes.jpg';
+import Yam from './../../../../assets/yam1.jpg';
+import style from './../farmStyles/crops.module.scss'; // SCSS for styling
+
+function CropsManagement() {
+  const crops = [
+    { image: maize, name: 'Maize', type: 'Cereal', farm: 'Ajaokuta-Farm', createdBy: 'Dr. Micheal James' },
+    { image: beans, name: 'Beans', type: 'Legume', farm: 'RiverSide Farm', createdBy: 'Prof. Ndoumbe Thomas' },
+    { image: carrots, name: 'Carrots', type: 'Cereal', farm: 'Hope Farm', createdBy: 'Prof. Ndoumbe' },
+    { image: mango, name: 'Mango', type: 'Fruits', farm: 'East Bertoua Farm', createdBy: 'Dr Caleb Jones' },
+    { image: potatoes, name: 'Potatoes', type: 'Vegetables', farm: 'North Carolana Farm', createdBy: 'Mrs. Mirabelle Clinton' },
+    { image: tomatoes, name: 'Tomatoes', type: 'Legumes', farm: 'RiverSide Farm', createdBy: 'Prof. Ndoumbe' },
+    { image: Yam, name: 'Yam', type: 'Cereal', farm: 'Ekondo titi Farm', createdBy: 'Prof. Ndoumbe' },
+  ];
+
+  return (
+    <div className={style.cropsWrapper}>
+      <div className={style.header}>
+        <Typography variant="h4" component="h1">Crops Management</Typography>
+      </div>
+
+      <div className={style.scrollArea}>
+        <Grid container spacing={3}>
+          {crops.map((crop, index) => (
+            <Grid item xs={12} sm={6} md={4} key={index}>
+              <Card sx={{ borderRadius: 3, boxShadow: 4 }}>
+                <CardMedia
+                  component="img"
+                  height="160"
+                  image={crop.image}
+                  alt={crop.name}
+                />
+                <CardContent>
+                  <Typography variant="h6">{crop.name}</Typography>
+                  <Typography variant="body2"><strong>Type:</strong> {crop.type}</Typography>
+                  <Typography variant="body2"><strong>Farm:</strong> {crop.farm}</Typography>
+                  <Typography variant="body2"><strong>Recommended by:</strong> {crop.createdBy}</Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      </div>
+    </div>
+  );
+}
+
+export default CropsManagement;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/////// SCSS//////// Codes for the 
+.cropsContainer {
+  padding: 2rem;
+  background-color: #f4f6f8;
+  min-height: 100vh;
+}
+
+.heading {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  color: #1a1a1a;
+}
+
+.gridWrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.cropCard {
+  background-color: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  }
+
+  img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+  }
+
+  .cardContent {
+    padding: 1rem;
+
+    h3 {
+      font-size: 1.3rem;
+      color: #333;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      margin: 4px 0;
+      font-size: 0.95rem;
+      color: #555;
+
+      strong {
+        color: #222;
+      }
+    }
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.cropCard {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+/* Mobile Responsive Adjustments */
+@media (max-width: 768px) {
+  .heading {
+    font-size: 1.6rem;
+    text-align: center;
+  }
+
+  .cardContent {
+    padding: 0.8rem;
+
+    h3 {
+      font-size: 1.1rem;
+    }
+
+    p {
+      font-size: 0.9rem;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .cropCard img {
+    height: 150px;
+  }
+
+  .cardContent {
+    padding: 0.6rem;
+  }
+}
+
+/* Add soft border effects */
+.cropCard {
+  border: 1px solid #e6e6e6;
+}
+
+/* Shadows on active */
+.cropCard:active {
+  transform: scale(0.99);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Add slight gradient effect */
+.cropCard {
+  background: linear-gradient(180deg, #ffffff 60%, #fafafa 100%);
+}
+
+/* Scroll effect */
+.cropsContainer {
+  overflow-x: hidden;
+}
+
+/* Card hover image zoom */
+.cropCard img {
+  transition: transform 0.3s ease;
+}
+
+.cropCard:hover img {
+  transform: scale(1.03);
+}
+
+/* Add subtle top border line */
+.cropCard {
+  border-top: 4px solid #4caf50;
+}
+
+/* Typography smoothing */
+.cropCard h3,
+.cropCard p {
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Fallback font */
+.cropCard {
+  font-family: 'Segoe UI', sans-serif;
+}

@@ -1,0 +1,17 @@
+# Node modules folder
+node_modules/
+
+# Environment variables
+config.env
+
+# Cloudinary config (or any secret config files)
+cloudinary.js
+
+# Optional: logs
+logs
+*.log
+npm-debug.log*
+
+# Optional: OS files
+.DS_Store
+Thumbs.db

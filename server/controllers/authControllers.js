@@ -1,3 +1,4 @@
+
 const Users = require('./../models/userModel');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -139,4 +140,5 @@ exports.logout = asyncErrorHandler( async( req, res ) =>{
       success: true
    })
 })
+
 

@@ -8,6 +8,7 @@ import EquipmentStats from './components/EquipementStats';
 import Irrigation from './components/Irrigation';
 import Pest_Disease from './components/Pest_Alerts';
 import Weather from './components/Weather';
+import NotFound from './notfoud'
 import FarmManagers from './../shared/Managers';
 import AgricExperts from './../shared/AgricExperts';
 import Settings from './components/Settings';
@@ -31,6 +32,7 @@ function FarmerRoutes(){
     <Route path="settings" element={<Settings />} />
     <Route path="notifications" element={<Notifications/>} />
     <Route path="farmerProfile" element={<FarmerProfile />} />
+    <Route path="*/"  element={<NotFound/>}/>
   
 
 

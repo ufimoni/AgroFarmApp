@@ -1,0 +1,140 @@
+const mongoose = require('mongoose');
+
+const animalSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+    trim: true
+  },
+
+  type: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  sex: {
+    type: String,
+    enum: ['Male', 'Female']
+  },
+  vaccinationRecords: {
+    VaccineName: String,
+    Type: String,
+    date: Date
+  },
+  medicalHistory: {
+    type: String,
+    condition: String,
+    date: Date
+  }
+
+  image: {
+    type: String // Cloudinary or local URL
+  },
+
+  farm: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Farm',
+    required: true
+  },
+
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User', // Expert or Manager
+    required: true
+  },
+
+  breed: {
+    type: String,
+    required: false
+  },
+
+  age: {
+    type: String, // e.g., "2 years"
+    required: false
+  },
+
+  healthStatus: {
+    type: String,
+    default: 'Unknown'
+  },
+
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+module.exports = mongoose.model('Animal', animalSchema);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const mongoose = require('mongoose');
+
+const vaccinationRecordSchema = new mongoose.Schema({
+  date: Date,
+  vaccine: String,
+  notes: String
+});
+
+const medicalRecordSchema = new mongoose.Schema({
+  date: Date,
+  condition: String,
+  treatment: String,
+  vet: String
+});
+
+const animalSchema = new mongoose.Schema({
+  name: String,
+  type: String,
+  breed: String,
+  tagNumber: { type: String, unique: true },
+  sex: { type: String, enum: ['Male', 'Female'] },
+  age: String,
+  weight: String,
+  color: String,
+
+  farm: { type: mongoose.Schema.Types.ObjectId, ref: 'Farm', required: true },
+  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+
+  healthStatus: { type: String, default: 'Unknown' },
+  lastHealthCheck: Date,
+  vaccinationRecords: [vaccinationRecordSchema],
+  medicalHistory: [medicalRecordSchema],
+
+  milkProduction: Number,
+  eggProduction: Number,
+  offspringCount: Number,
+
+  image: String,
+  video: String,
+  notes: String
+}, {
+  timestamps: true
+});
+
+module.exports = mongoose.model('Animal', animalSchema);

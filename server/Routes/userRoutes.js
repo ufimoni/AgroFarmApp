@@ -1,6 +1,6 @@
 const express = require('express');
 const authMiddleware = require('./../middlewares/authMiddleware');
-const userControl = require('./../controllers/userControllers');
+const userControl = require('./../controllers/usersControllers');
 const router = express.Router();
 
 router.route('/get-logged-user')
@@ -8,4 +8,4 @@ router.route('/get-logged-user')
 router.route('/getAllUsers')       
        .get(authMiddleware, userControl.getAllUsers)
 
- module.exports = router;      
+ module.exports = router;

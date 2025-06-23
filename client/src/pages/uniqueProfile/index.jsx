@@ -77,7 +77,7 @@ function UniqueProfile() {
 
       <p><strong>Email:</strong> {user.email || 'Not available'}</p>
       <p><strong>Phone:</strong> {phone || user.phone || 'Not provided'}</p>
-      <p><strong>Role:</strong> 
+      <p><strong>Occupation:</strong> 
         <Chip label={user.role || 'N/A'} color="primary" variant="outlined" size="small" />
       </p>
       <p><strong>Biography:</strong> {bio || 'No bio available'}</p>
