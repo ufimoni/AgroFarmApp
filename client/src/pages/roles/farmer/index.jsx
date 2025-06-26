@@ -16,6 +16,7 @@ import Notifications from './components/notifications';
 import FarmerProfile from './components/profile';
 
 import ChatArea from './sections/ChatArea'
+import SelectedCrops from './sections/SelectedCrops';
 
 function FarmerRoutes(){
     return(
@@ -32,8 +33,11 @@ function FarmerRoutes(){
     <Route path="settings" element={<Settings />} />
     <Route path="notifications" element={<Notifications/>} />
     <Route path="farmerProfile" element={<FarmerProfile />} />
+
     <Route path="*/"  element={<NotFound/>}/>
   
+  {/*This is the section*/}
+   <Route path="crops/:cropName" element={<SelectedCrops/>}/>
 
 
 {/* The Other Routes*/}

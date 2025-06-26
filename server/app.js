@@ -5,13 +5,16 @@ const cookieParser = require('cookie-parser');
 const authRoutes = require('./Routes/authRoutes');
 const userRoutes = require('./Routes/userRoutes')
 const profileRoutes = require('./Routes/profileRoutes')
+const cropsRoutes = require('./Routes/cropRoutes');
+const farmRoutes = require('./Routes/farmRoutes');
+
 const app = express();
 app.use(morgan('dev'));
 
 
 app.use(cookieParser());
 
-/// since we will be uploading videos
+/// since we will be uplo
 app.use(express.json({ limit: '70mb'}));
 app.use(express.urlencoded({
   extended: true,
@@ -27,6 +30,8 @@ app.use(cors({
 app.use('/api/auth',authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/profile', profileRoutes);
+app.use('/api/crops', cropsRoutes);
+app.use('/api/farm', farmRoutes)
 
 
 /// Login out the activities in this application

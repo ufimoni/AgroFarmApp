@@ -75,3 +75,27 @@ exports.updateTaskStatus = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
+exports.deleteTask = async (req, res) => {
+  try {
+    const taskId = req.params.taskId;
+
+    const task = await Task.findById(taskId);
+    if (!task || task.isDeleted) {
+      return res.status(404).json({ success: false, message: 'Task not found' });
+    }
+
+    task.isActive = false;
+    await task.save();
+
+    // Optional: remove taskRef from crop.taskRefs if needed
+    if (task.crop) {
+      await Crop.findByIdAndUpdate(task.crop, {
+        $pull: { taskRefs: task._id }
+      });
+    }
+
+    res.status(200).json({ success: true, message: 'Tasks deleted success' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};

@@ -1,0 +1,91 @@
+// styles/createfarm.module.scss
+
+.createFarmWrapper {
+  background: linear-gradient(to right, #f4f9f9, #e9f7f7);
+  border-radius: 12px;
+  padding: 8rem;
+  min-height: 100vh;
+  overflow-y: auto; // Enable vertical scroll when needed
+  max-height: 100vh;
+
+  h1 {
+    color: #2c3e50;
+    font-weight: 600;
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  form {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
+    padding: 2rem;
+
+    .form-label {
+      font-weight: 500;
+      color: #34495e;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-control,
+    .form-select {
+      border-radius: 8px;
+      padding: 0.6rem 0.75rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      transition: 0.2s ease;
+
+      &:focus {
+        border-color: #28a745;
+        box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.2);
+      }
+    }
+
+    select[multiple] {
+      height: 120px;
+    }
+
+    .btn {
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 1.1rem;
+      padding: 0.6rem;
+      margin-top: 1rem;
+    }
+  }
+
+  // Responsive design
+  @media screen and (max-width: 768px) {
+    padding: 1rem;
+
+    form {
+      padding: 1.2rem;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+    }
+
+    .btn {
+      font-size: 1rem;
+    }
+
+    select[multiple] {
+      height: 100px;
+    }
+  }
+
+  // Smooth scroll if content overflows
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+}

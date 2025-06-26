@@ -1,37 +1,59 @@
-
-// Create a new crop
-const Crop = require('../models/cropModel');
+const Crop = require('./../models/cropsModel');
 const asyncErrorHandler = require('./../middlewares/asyncErrorHandler');
-const cloudinary = require('../utils/cloudinary');
+const Farm = require('./../models/farmModel');
+const cloudinary = require('./../cloudinary');
 
-// Create a new crop
+
+
 exports.createCrop = asyncErrorHandler(async (req, res) => {
   try {
-    const { name, type, farm } = req.body;
-    let imageUrl = '';
+    const { name, type, description, farm, image, video } = req.body;
 
-    // Handle image upload (expecting req.file or base64 from frontend)
-    if (req.file) {
-      const result = await cloudinary.uploader.upload(req.file.path, {
-        folder: 'agrofarm/crops',
-        resource_type: 'image'
+    if (!name || !type || !farm) {
+      return res.status(400).json({
+        success: false,
+        message: 'Name, type, and farm are required',
       });
-      imageUrl = result.secure_url;
     }
 
-    const crop = await Crop.create({
+    const existingFarm = await Farm.findOne({ _id: farm, isDeleted: false });
+    if (!existingFarm) {
+      return res.status(400).json({
+        success: false,
+        message: 'Farm not found or invalid farm ID',
+      });
+    }
+
+    const crop = new Crop({
       name,
       type,
-      image: imageUrl,
+      description,
+      image: image || '',
+      video: video || '',
       farm,
-      createdBy: req.user._id
+      createdBy: req.user._id,
     });
 
-    res.status(201).json({ success: true, crop });
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    await crop.save();
+
+    existingFarm.crops.push(crop._id);
+    await existingFarm.save();
+
+    res.status(201).json({
+      success: true,
+      message: 'Crop created successfully',
+      data: crop,
+    });
+  } catch (error) {
+    console.error('Crop creation failed:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error: ' + error.message,
+    });
   }
 });
+
+
 
 
 // Get all crops (admin/expert)
@@ -42,14 +64,14 @@ exports.getAllCrops = asyncErrorHandler(async (req, res) => {
       .populate('createdBy', 'name');
 
     res.status(200).json({
-       success: true,
-       crops 
-      });
+      success: true,
+      crops,
+    });
   } catch (error) {
-        res.status(500).json({
-        success: false,
-        message: error.message
-       });
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 });
 
@@ -67,7 +89,7 @@ exports.getCropsByFarm = asyncErrorHandler(async (req, res) => {
   }
 });
 
-///// Get Crops for Farmer
+// Get crops for farmer (crops on farms where user is a farmer)
 exports.getCropsForFarmer = asyncErrorHandler(async (req, res) => {
   try {
     const userId = req.user._id;
@@ -79,10 +101,36 @@ exports.getCropsForFarmer = asyncErrorHandler(async (req, res) => {
       })
       .populate('createdBy', 'name');
 
+    // filter out crops where farm didn't match the user
     const filtered = crops.filter(crop => crop.farm !== null);
 
     res.status(200).json({ success: true, crops: filtered });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+exports.getCropById = asyncErrorHandler(async (req, res) => {
+  try {
+    const crop = await Crop.findOne({ _id: req.params.id, isDeleted: false })
+      .populate('createdBy', 'name email role')
+      .populate('farm', 'name location');
+
+    if (!crop) {
+      return res.status(404).json({
+        success: false,
+        message: 'Crop not found',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      crop,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 });

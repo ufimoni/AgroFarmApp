@@ -17,7 +17,10 @@ const farmSchema = new mongoose.Schema({
     type: String, // e.g., "10 acres"
     required: false
   },
-
+ isDeleted: {
+  type: Boolean,
+  default: false
+ },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

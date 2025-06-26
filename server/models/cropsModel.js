@@ -15,6 +15,9 @@ const cropSchema = new mongoose.Schema({
   video:{
     type: String
   },
+  description: {
+    type: String
+  },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
@@ -26,5 +29,5 @@ const cropSchema = new mongoose.Schema({
 }, {
   timestamps: true
 });
-
-module.exports = mongoose.model('Crop', cropSchema);
+const Crop = mongoose.model('Crop', cropSchema);
+module.exports = Crop;

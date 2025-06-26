@@ -7,6 +7,7 @@ import DataAnalysis from "./components/Data_Analysis";
 import FeildVisits from "./components/Feild_Visits";
 import Research from "./components/Research";
 import KnowledgeBase from "./components/Knowledge";
+import ExpertCrops from "./components/ExpertCrops";
 function ExpertRoutes(){
     return(
         <Routes>
@@ -16,6 +17,7 @@ function ExpertRoutes(){
         <Route path="visits" element={<FeildVisits/>}/>
         <Route path="knowledge" element={<KnowledgeBase/>}/>
         <Route path="research" element={<Research/>}/>
+        <Route path="uploadcrops" element={<ExpertCrops/>} />
          {/*The Routes for the other stakeholder*/}
         <Route path="farmers" element={<Farmers/>}/>
         <Route path="managers" element={<FarmManagers/>}/>

@@ -6,7 +6,8 @@ import {
   FaBook,
   FaComments,
   FaTractor,
-  FaUserCog
+  FaUserCog,
+  FaSeedling
 } from "react-icons/fa";
 import styles from "./../expertStyles/sidebar.module.scss";
 import userRoleFilter from "./../../../../hooks/userRoleFilter";
@@ -27,6 +28,15 @@ const handleRoleClick = userRoleFilter();
             Research & Tips
           </NavLink>
         </li>
+
+        {/*Uploading Crops here...*/}
+         <li>
+          <NavLink to="/expert/uploadcrops" className={`${styles.link} d-flex align-items-center mb-3`}>
+            <FaSeedling className="me-2" />
+               Upload Crops
+          </NavLink>
+        </li>
+
         <li>
           <NavLink to="/expert/visits" className={`${styles.link} d-flex align-items-center mb-3`}>
             <FaClipboardList className="me-2" />

@@ -28,6 +28,7 @@ function Login(){
                 if(role === 'farmer'){
                     navigate('/farmer')
                 }else if(role === 'farm-manager'){
+                    
                    navigate('/manager')
                 }else if(role === 'agro-expert'){
                   navigate('/expert')

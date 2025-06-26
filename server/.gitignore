@@ -15,3 +15,8 @@ npm-debug.log*
 # Optional: OS files
 .DS_Store
 Thumbs.db
+#### we ignore our alltxt files
+animal.txt
+crops.txt
+app.draw.io 
+

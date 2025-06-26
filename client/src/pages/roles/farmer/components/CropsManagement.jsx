@@ -1,6 +1,5 @@
 import React from 'react';
 import style from './../farmStyles/crops.module.scss';
-
 import maize from './../../../../assets/maize.jpg';
 import beans from './../../../../assets/beans.jpg';
 import carrots from './../../../../assets/carrots.jpg';
