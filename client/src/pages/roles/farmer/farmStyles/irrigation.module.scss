@@ -1,0 +1,41 @@
+.irrigationContainer {
+  padding: 2rem;
+  min-height: 100vh;
+  background-image: url('./../../../../assets/irrigation4.jpg'); // ✅ Adjust path as needed
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: #fff;
+
+  h2 {
+    font-weight: bold;
+    color: #ffffff;
+  }
+
+  .controlCard {
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 2rem;
+    border-radius: 12px;
+    max-width: 400px;
+    margin: 2rem auto;
+    color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  }
+
+  .icon {
+    color: #00bcd4;
+  }
+
+  .statusText {
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+
+  .on {
+    color: #4caf50;
+  }
+
+  .off {
+    color: #f44336;
+  }
+}
