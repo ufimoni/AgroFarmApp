@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import styles from './../expertStyles/chatarea.module.scss';
 import { FaPaperPlane } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
+import moment from 'moment';
 import { createNewMessage, getAllMessage } from './../../../../api/message';
 import toast from 'react-hot-toast';
 
@@ -16,6 +17,23 @@ const ChatArea = () => {
   const [messages, setMessages] = useState([]);
 
   const messagesEndRef = useRef(null);
+
+const formatTime = (timestamp) => {
+  const now = moment();
+  const msgTime = moment(timestamp);
+
+  if (msgTime.isSame(now, 'day')) {
+    return `Today at ${msgTime.format('h:mm A')}`;
+  } else if (msgTime.isSame(now.clone().subtract(1, 'days'), 'day')) {
+    return `Yesterday at ${msgTime.format('h:mm A')}`;
+  } else {
+    return msgTime.format('D MMM YYYY [at] h:mm A');
+  }
+};
+
+
+
+  
 
   useEffect(() => {
     const getMessages = async () => {
@@ -100,6 +118,7 @@ const ChatArea = () => {
             className={`${styles.message} ${msg.self ? styles.me : styles.other}`}
           >
             <div>{msg.text}</div>
+           <div className={styles.timestamp}>{formatTime(msg.createdAt)}</div>
           </div>
         ))}
         <div ref={messagesEndRef} />

@@ -1,6 +1,9 @@
 .analysisContainer {
   padding: 1rem;
   background: #f8f9fa;
+  height: calc(100vh - 70px); // Adjust based on your header height
+  overflow-y: auto; // Enable vertical scroll
+  overflow-x: hidden;
 
   h2 {
     margin-bottom: 2rem;
@@ -20,3 +23,4 @@
     }
   }
 }
+
