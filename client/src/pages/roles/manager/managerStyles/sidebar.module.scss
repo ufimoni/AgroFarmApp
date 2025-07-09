@@ -1,11 +1,14 @@
-.sidebar{
-    width: 250px;
-    min-height: 100vh;
-    background-color: #198754;
-    position: sticky;
-    top: 0;
-    color: white;
+.sidebar {
+  width: 250px;
+  min-height: 100vh;
+  background-color: #198754;
+  position: sticky;
+  top: 0;
+  flex-shrink: 0; // ✅ Important to stop it from shrinking
+  color: white;
+  z-index: 100;
 }
+
 .title {
   font-size: 1.25rem;
   font-weight: 600;

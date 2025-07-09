@@ -85,7 +85,7 @@ exports.login = asyncErrorHandler(async (req, res) => {
 
   // Check if email and password are provided
   if (!email || !password) {
-    return res.status(400).json({
+    return res.send({
       success: false,
       message: 'Email and password are required',
     });
@@ -94,18 +94,18 @@ exports.login = asyncErrorHandler(async (req, res) => {
   // Find user by email
   const user = await Users.findOne({ email });
   if (!user) {
-    return res.status(401).json({
+    return res.send({
       success: false,
-      message: 'Invalid email or password',
+      message: 'Invalid email user does not exits',
     });
   }
 
   // Check password
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
-    return res.status(401).json({
+    return res.send({
       success: false,
-      message: 'Invalid email or password',
+      message: 'Invalid password',
     });
   }
 

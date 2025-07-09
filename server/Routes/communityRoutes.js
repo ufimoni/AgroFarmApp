@@ -4,6 +4,3 @@ const authMiddleware = require('./../middlewares/authMiddleware');
 
 
 
-router.route('/addarticles')
-      .post()
-router.route('/')

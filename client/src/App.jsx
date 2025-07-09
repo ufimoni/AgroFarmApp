@@ -9,12 +9,13 @@ import Owner from './pages/roles/owner';
 import Farmer from './pages/roles/farmer';
 import Manager from './pages/roles/manager';
 import Expert from './pages/roles/expert';
+import Admin from './pages/roles/admin';
 import Loader from './components/Loader';
 import UniqueProfile from './pages/UniqueProfile';
 import ProtectedRoute from './components/ProtectedRoute'; // 
 
 import './App.scss';
-import './App.css';
+// import './App.css';
 
 function App() {
   const loader = useSelector((state) => state.loader);
@@ -61,6 +62,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Owner />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/*"
+            element={
+              <ProtectedRoute>
+                <Admin />
               </ProtectedRoute>
             }
           />

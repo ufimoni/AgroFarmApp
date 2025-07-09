@@ -1,0 +1,45 @@
+.taskListContainer {
+  padding: 20px;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+
+  h3 {
+    color: #2c3e50;
+    font-weight: 600;
+  }
+}
+
+.taskCard {
+  border: 1px solid #ddd;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+
+  .card-body {
+    padding: 1.5rem;
+
+    .card-title {
+      color: #2d3436;
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .card-subtitle {
+      margin-bottom: 0.5rem;
+    }
+
+    .card-text {
+      font-size: 0.95rem;
+      color: #000; // 
+    }
+
+    button {
+      margin-top: 10px;
+    }
+  }
+}
+

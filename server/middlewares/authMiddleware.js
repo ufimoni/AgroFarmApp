@@ -16,7 +16,12 @@ module.exports = async (req, res, next) => {
       return res.status(401).json({ success: false, message: 'User not found' });
     }
 
-    req.user = user; 
+    // Attach user doc plus a userId field to keep backward compatibility
+    req.user = {
+      ...user._doc,
+      userId: user._id.toString()
+    };
+
     next();
   } catch (error) {
     res.status(401).json({ success: false, message: error.message });

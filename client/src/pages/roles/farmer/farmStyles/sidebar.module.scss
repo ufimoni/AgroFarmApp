@@ -69,3 +69,30 @@
     font-size: 1.1rem;
   }
 }
+@media (max-width: 400px) {
+  .sidebar {
+    width: 70px;
+    padding: 0.5rem 0.3rem;
+  }
+
+  .title {
+    display: none;
+  }
+
+  .link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.7rem 0;
+
+    // Hide text inside links, assuming it's in a <span> or similar element
+    span, 
+    .link-text {
+      display: none;
+    }
+
+    svg {
+      font-size: 1.3rem;
+    }
+  }
+}

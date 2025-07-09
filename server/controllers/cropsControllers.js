@@ -59,13 +59,25 @@ exports.createCrop = asyncErrorHandler(async (req, res) => {
 // Get all crops (admin/expert)
 exports.getAllCrops = asyncErrorHandler(async (req, res) => {
   try {
-    const crops = await Crop.find()
+    const crops = await Crop.find({}, 'name type description image farm createdBy')
       .populate('farm', 'name')
-      .populate('createdBy', 'name');
+      .populate('createdBy', 'firstname lastname');
+
+    const filteredCrops = crops.map(crop => ({
+      _id: crop._id,
+      name: crop.name,
+      type: crop.type,
+      image: crop.image || '',
+      description: crop.description,
+      farm: crop.farm?.name || 'Unknown Farm',
+      createdBy: crop.createdBy
+        ? `${crop.createdBy.firstname} ${crop.createdBy.lastname}`
+        : 'Unknown Expert'
+    }));
 
     res.status(200).json({
       success: true,
-      crops,
+      crops: filteredCrops,
     });
   } catch (error) {
     res.status(500).json({
@@ -74,6 +86,8 @@ exports.getAllCrops = asyncErrorHandler(async (req, res) => {
     });
   }
 });
+
+
 
 // Get crops by farm
 exports.getCropsByFarm = asyncErrorHandler(async (req, res) => {
@@ -112,8 +126,8 @@ exports.getCropsForFarmer = asyncErrorHandler(async (req, res) => {
 
 exports.getCropById = asyncErrorHandler(async (req, res) => {
   try {
-    const crop = await Crop.findOne({ _id: req.params.id, isDeleted: false })
-      .populate('createdBy', 'name email role')
+    const crop = await Crop.findOne({ _id: req.params.id })
+      .populate('createdBy', 'firstname lastname email role image')
       .populate('farm', 'name location');
 
     if (!crop) {
@@ -123,14 +137,96 @@ exports.getCropById = asyncErrorHandler(async (req, res) => {
       });
     }
 
+    const formattedCrop = {
+      _id: crop._id,
+      name: crop.name,
+      type: crop.type,
+      description: crop.description || 'No description provided.',
+      image: crop.image || '',
+      video: crop.video || '',
+      createdBy: crop.createdBy
+        ? {
+            name: `${crop.createdBy.firstname} ${crop.createdBy.lastname}`,
+            email: crop.createdBy.email,
+            role: crop.createdBy.role,
+            image: crop.createdBy.image || '',
+          }
+        : {
+            name: 'Unknown Expert',
+            email: '',
+            role: '',
+            image: '',
+          },
+      farm: crop.farm
+        ? {
+            name: crop.farm.name,
+            location: crop.farm.location,
+          }
+        : {
+            name: 'Unknown Farm',
+            location: '',
+          },
+      createdAt: crop.createdAt,
+    };
+
     res.status(200).json({
       success: true,
-      crop,
+      crop: formattedCrop,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
       message: error.message,
     });
+  }
+});
+
+
+exports.searchCrops = asyncErrorHandler(async (req, res) => {
+  try {
+    const { type, name, farm, sortBy = 'createdAt', order = 'desc' } = req.query;
+
+    const query = {};
+
+    if (type) {
+      query.type = type;
+    }
+
+    if (name) {
+      query.name = { $regex: name, $options: 'i' }; // case-insensitive partial match
+    }
+
+    if (farm) {
+      const farmDoc = await Farm.findOne({ name: { $regex: farm, $options: 'i' } });
+      if (farmDoc) {
+        query.farm = farmDoc._id;
+      } else {
+        return res.status(404).json({ success: false, message: 'Farm not found' });
+      }
+    }
+
+    const crops = await Crop.find(query)
+      .populate('farm', 'name location')
+      .populate('createdBy', 'firstname lastname email role')
+      .sort({ [sortBy]: order === 'asc' ? 1 : -1 });
+
+    const formatted = crops.map(crop => ({
+      _id: crop._id,
+      name: crop.name,
+      type: crop.type,
+      description: crop.description,
+      image: crop.image,
+      farm: crop.farm?.name || 'Unknown Farm',
+      createdBy: crop.createdBy
+        ? `${crop.createdBy.firstname} ${crop.createdBy.lastname}`
+        : 'Unknown Expert',
+    }));
+
+    res.status(200).json({
+      success: true,
+      crops: formatted,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
 });

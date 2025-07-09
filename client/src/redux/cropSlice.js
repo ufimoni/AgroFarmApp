@@ -1,7 +1,7 @@
-// redux/slices/cropSlice.js
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { createCrop } from './../api/crop';
+import { createCrop, getAllCrops } from './../api/crop'; // ✅ import it
 
+// Upload a new crop
 export const uploadCrop = createAsyncThunk(
   'crop/uploadCrop',
   async (formData, { rejectWithValue }) => {
@@ -14,17 +14,32 @@ export const uploadCrop = createAsyncThunk(
   }
 );
 
+
+export const fetchAllCrops = createAsyncThunk(
+  'crop/fetchAllCrops',
+  async (_, { rejectWithValue }) => {
+    try {
+      const data = await getAllCrops();
+      return data.crops || [];
+    } catch (error) {
+      return rejectWithValue(error.message || 'Failed to fetch crops');
+    }
+  }
+);
+
+// Crop slice
 const cropSlice = createSlice({
   name: 'crop',
   initialState: {
     loading: false,
     error: null,
     success: false,
-    crops: [], // future use
+    crops: [],
   },
   reducers: {},
   extraReducers: (builder) => {
     builder
+      // Upload Crop
       .addCase(uploadCrop.pending, (state) => {
         state.loading = true;
         state.success = false;
@@ -40,6 +55,20 @@ const cropSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
         state.success = false;
+      })
+
+      // Fetch All Crops
+      .addCase(fetchAllCrops.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchAllCrops.fulfilled, (state, action) => {
+        state.loading = false;
+        state.crops = action.payload;
+      })
+      .addCase(fetchAllCrops.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });

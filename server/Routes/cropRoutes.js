@@ -17,5 +17,7 @@ router.route('/get-crops-farmers')
 
 router.route('/mycrops/:id')
   .get(authMiddleware, cropsControl.getCropById);
+router.route('/search-crops')
+      .get(authMiddleware, cropsControl.searchCrops);
 
 module.exports = router;

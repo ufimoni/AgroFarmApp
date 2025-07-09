@@ -6,12 +6,14 @@ import FarmManagers from "../shared/Managers";
 import DataAnalysis from "./components/Data_Analysis";
 import FeildVisits from "./components/Feild_Visits";
 import Research from "./components/Research";
+import Overview from './sections/Overview'
 import KnowledgeBase from "./components/Knowledge";
 import ExpertCrops from "./components/ExpertCrops";
 function ExpertRoutes(){
     return(
         <Routes>
         <Route path="/" element={<Dashboard/>}>
+         <Route index element={<Overview/>}/>
         <Route path="chat" element={<ChatArea/>}/>
         <Route path="analytics" element={<DataAnalysis/>}/>
         <Route path="visits" element={<FeildVisits/>}/>

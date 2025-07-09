@@ -1,0 +1,282 @@
+///viewing of Ai code before adding
+// src/components/Settings/Settings.jsx
+import React, { useState, useEffect } from 'react';
+import styles from './settings.module.scss';
+import { useNavigate } from 'react-router-dom';
+import { uploadProfileImage } from '../../api/profile';
+import { toBase64 } from '../../utils/base64Converter'; // create this util
+import toast from 'react-hot-toast';
+
+const Settings = () => {
+  const [theme, setTheme] = useState('light');
+  const [imageFile, setImageFile] = useState(null);
+  const [preview, setPreview] = useState(null);
+  const navigate = useNavigate();
+
+  // Apply theme on load
+  useEffect(() => {
+    document.body.className = theme;
+  }, [theme]);
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setImageFile(file);
+
+    // Show preview
+    const previewUrl = URL.createObjectURL(file);
+    setPreview(previewUrl);
+  };
+
+  const handleImageUpload = async () => {
+    if (!imageFile) return toast.error('Please select an image');
+
+    try {
+      const base64 = await toBase64(imageFile);
+      const response = await uploadProfileImage(base64);
+
+      if (response.success) {
+        toast.success('Image uploaded successfully');
+        setPreview(response.data.profile.Image || response.data.user.image);
+      } else {
+        toast.error(response.message || 'Upload failed');
+      }
+    } catch (err) {
+      toast.error('Something went wrong');
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.clear();
+    toast.success('Logged out');
+    navigate('/');
+  };
+
+  const toggleTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    document.body.className = newTheme;
+    setTheme(newTheme);
+  };
+
+  return (
+    <div className={`${styles.settingsContainer} ${theme === 'dark' ? styles.dark : ''}`}>
+      <h3 className="mb-4">Settings for Farmers</h3>
+
+      {/* Upload Image Section */}
+      <div className="mb-3">
+        <label htmlFor="upload" className="form-label">Profile Image</label>
+        <input
+          type="file"
+          accept="image/*"
+          id="upload"
+          className="form-control"
+          onChange={handleFileChange}
+        />
+        {preview && (
+          <div className="mt-3">
+            <img src={preview} alt="Preview" className={styles.previewImage} />
+          </div>
+        )}
+        <button className="btn btn-primary mt-2" onClick={handleImageUpload}>
+          Upload Image
+        </button>
+      </div>
+
+      {/* Theme Toggle */}
+      <div className="mb-3">
+        <button className="btn btn-secondary" onClick={toggleTheme}>
+          Switch to {theme === 'light' ? 'Dark' : 'Light'} Mode
+        </button>
+      </div>
+
+      {/* Logout */}
+      <div className="mb-3">
+        <button className="btn btn-danger" onClick={handleLogout}>
+          Logout
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default Settings;
+
+
+
+
+
+// src/components/Settings/settings.module.scss
+
+.settingsContainer {
+  padding: 2rem;
+  background-color: #ffffff;
+  color: #000;
+  min-height: 100vh;
+  transition: all 0.3s ease;
+
+  h3 {
+    font-weight: 600;
+  }
+
+  .form-control {
+    max-width: 400px;
+  }
+}
+
+.dark {
+  background-color: #121212;
+  color: #ffffff;
+
+  .form-control,
+  button {
+    background-color: #1f1f1f;
+    color: #ffffff;
+    border: 1px solid #444;
+  }
+
+  .btn-secondary {
+    background-color: #333;
+  }
+
+  .btn-danger {
+    background-color: #e74c3c;
+  }
+}
+
+.previewImage {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { showLoader, hideLoader } from './../../../redux/loaderSlice';
+import { useNavigate } from 'react-router-dom';
+import { setRoleBasedUsers } from './../../../redux/userSlice';
+import { getUserByRole } from './../../../api/user';
+import { CreateChats, getAllchats } from './../../../api/chat'
+
+import toast from 'react-hot-toast';
+import UserListPage from './userLists';
+
+const Farmers = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const currentUser = useSelector((state) => state.user.profile);
+  const users = useSelector((state) => state.user.roleBasedUsers || []);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        dispatch(showLoader());
+        const response = await getUserByRole('farmer');
+        dispatch(hideLoader());
+
+        if (response.success) {
+          dispatch(setRoleBasedUsers(response.users));
+          // toast.success('Farmers loaded successfully');
+        } else {
+          toast.error('Failed to load Farmers');
+        }
+      } catch (error) {
+        dispatch(hideLoader());
+        toast.error(error.message || 'Error loading Farmers');
+      }
+    };
+
+    fetchUsers();
+  }, [dispatch]);
+
+  const handleStartChat = async (selectedUser) => {
+    if (!selectedUser) {
+      console.error('selectedUser is undefined');
+      return;
+    }
+    if (!currentUser || !currentUser.role) {
+      toast.error('Current user information is missing or invalid.');
+      return;
+    }
+
+    switch (currentUser.role) {
+      case 'farm-manager':
+        navigate('/manager/chat', { state: { selectedUser } });
+        break;
+      case 'farmer':
+        navigate('/farmer/chat', { state: { selectedUser } });
+        break;
+      case 'agro-expert':
+        navigate('/expert/chat', { state: { selectedUser } });
+        break;
+      default:
+        toast.error('Unknown role. Access denied.');
+    }
+   try {
+      // Prepare members array with current user and selected user
+      const members = [currentUser._id, selectedUser._id];
+
+      // Call backend to create or get existing chat
+      const response = await CreateChats(members);
+
+      if (response.success) {
+        toast.success('Chat started! Redirecting...');
+        // Navigate to chat page, passing chat data or user
+        navigate('/chat', { state: { chat: response.data } });
+      } else {
+        toast.error('Failed to start chat.');
+      }
+    } catch (error) {
+      toast.error(error.message || 'Error starting chat.');
+    }
+
+  };
+
+  const handleViewProfile = (user) => {
+    navigate(`/uniqueprofile/${user._id}`);
+  };
+
+  return (
+    <UserListPage
+      users={users}
+      title="Farmers"
+      onStartChat={handleStartChat}
+      onViewProfile={handleViewProfile}
+    />
+  );
+};
+
+export default Farmers;

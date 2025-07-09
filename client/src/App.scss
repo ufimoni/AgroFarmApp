@@ -1,0 +1,36 @@
+// App.scss
+
+body.light {
+  --bg-color: #ffffff;
+  --text-color: #000000;
+  --primary-color: #198754;
+  --primary-hover: #146c43;
+  --card-bg: #f8f9fa;
+  --border-color: #ddd;
+}
+
+body.dark {
+  --bg-color: #121212;
+  --text-color: #e4e4e4;
+  --primary-color: #66ccff;
+  --primary-hover: #3399cc;
+  --card-bg: #1e1e1e;
+  --border-color: #444;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: 'Segoe UI', sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+// Optional for the .App wrapper
+.App {
+  min-height: 100vh;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+

@@ -1,5 +1,5 @@
 const Task = require('../models/taskModel');
-const Crop = require('../models/cropModel');
+const Crop = require('../models/cropsModel');
 const Farm = require('../models/farmModel');
 
 // Create a new task

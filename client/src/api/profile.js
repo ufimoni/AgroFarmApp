@@ -52,14 +52,26 @@ export const updateProfile = async (userId, updates) => {
 };
 
 // Upload Profile Image
-export const uploadProfileImage = async (formData) => {
+// Detect if it's a file or URL
+export const uploadProfileImage = async (input) => {
   try {
-    const response = await axiosInstance.post('/api/profile/upload-image', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    });
-    return response.data;
+    if (typeof input === 'string') {
+      // Send URL directly
+      const response = await axiosInstance.put('/api/profile/update-image-url', {
+        image: input,
+      });
+      return response.data;
+    } else {
+      // Upload file (FormData)
+      const formData = new FormData();
+      formData.append('image', input);
+      const response = await axiosInstance.post('/api/profile/upload-image', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data;
+    }
   } catch (error) {
     return error;
   }

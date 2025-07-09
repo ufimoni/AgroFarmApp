@@ -48,13 +48,15 @@ const UserListPage = ({ users, title, onStartChat, onViewProfile }) => {
                 <div className={styles.userInfo}>
                   <h3>{user.firstname} {user.lastname}</h3>
                   <p className={styles.email}>{user.email}</p>
-                  <p className={styles.bio}>{user.bio || user.profession || 'No bio available'}</p>
+                  <p className={styles.bio}>{user.bio || user.profession || 'click to view bio'}</p>
                 </div>
               </div>
               <div className={styles.actions}>
                 <button 
                   className="btn btn-primary me-2" 
-                  onClick={() => onStartChat(user)}
+                  onClick={() => {
+                    console.log('Start Chat button clicked for user:', user)
+                    onStartChat(user)}}
                 >
                   Start Chat
                 </button>
