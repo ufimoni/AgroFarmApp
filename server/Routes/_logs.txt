@@ -1,0 +1,80 @@
+//// this is for type script
+// src/utils/log.ts
+
+type LogLevel = 'info' | 'warn' | 'error';
+
+export function log(message: string, level: LogLevel = 'info', data?: any) {
+  const timestamp = new Date().toISOString();
+  const formatted = `[CLIENT ${level.toUpperCase()}] ${timestamp}: ${message}`;
+
+  if (level === 'info') {
+    console.info(formatted);
+  } else if (level === 'warn') {
+    console.warn(formatted);
+  } else if (level === 'error') {
+    console.error(formatted);
+  }
+
+  if (data) console.log('Additional Data:', data);
+}
+ for the frontend
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ // utils/log.ts
+
+type LogLevel = 'info' | 'warn' | 'error';
+
+export function log(message: string, level: LogLevel = 'info', data?: any) {
+  const timestamp = new Date().toISOString();
+  const formatted = `[SERVER ${level.toUpperCase()}] ${timestamp}: ${message}`;
+
+  if (level === 'info') {
+    console.info(formatted);
+  } else if (level === 'warn') {
+    console.warn(formatted);
+  } else if (level === 'error') {
+    console.error(formatted);
+  }
+
+  if (data) console.dir(data, { depth: null });
+}
+
